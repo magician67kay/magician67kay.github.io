@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Magician67kay Meme Background</title>
+<title>Magician67kay Meme Page</title>
 <style>
   html, body {
     margin: 0;
@@ -19,65 +19,18 @@
     background-position: center;
     background-repeat: no-repeat;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-  }
-
-  #info {
-    color: white;
-    font-size: 2.5rem;
-    font-weight: bold;
-    text-align: center;
-    text-shadow:
-       -2px -2px 0 #000,
-        2px -2px 0 #000,
-       -2px  2px 0 #000,
-        2px  2px 0 #000; /* black outline */
-    white-space: pre; /* preserve line breaks */
   }
 </style>
 </head>
 <body>
 
-<div id="info">Loading info...</div>
-
-<script>
-async function fetchUserInfo() {
-  try {
-    const response = await fetch('https://ipapi.co/json/');
-    const data = await response.json();
-
-    const infoText = 
-      `Your IP: ${data.ip}\n` +
-      `Country: ${data.country_name}\n` +
-      `City: ${data.city}\n` +
-      `Timezone: ${data.timezone}\n` +
-      `ISP: ${data.org}`;
-
-    typeText(infoText, 'info', 50); // typing effect, 50ms per character
-  } catch (err) {
-    document.getElementById('info').textContent = 'Could not fetch info';
-    console.error(err);
-  }
-}
-
-function typeText(text, elementId, speed) {
-  const element = document.getElementById(elementId);
-  element.textContent = '';
-  let i = 0;
-  const interval = setInterval(() => {
-    if (i < text.length) {
-      element.textContent += text.charAt(i);
-      i++;
-    } else {
-      clearInterval(interval);
-    }
-  }, speed);
-}
-
-fetchUserInfo();
-</script>
+<!-- Audio playback -->
+<audio autoplay loop>
+  <source src="aaaa.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
 
 </body>
 </html>

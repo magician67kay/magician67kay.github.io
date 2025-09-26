@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Magician67kay Video Background</title>
+<title>Magician67kay Meme Background</title>
 <style>
   /* Make page fill the screen with no scroll */
   html, body {
@@ -11,22 +11,18 @@
     padding: 0;
     height: 100%;
     overflow: hidden;
-    background: black;
   }
 
-  /* Full-screen video */
-  #bg-video {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 177.78vh; /* ensures 16:9 video covers screen */
-    height: 100vh;
-    transform: translate(-50%, -50%);
-    object-fit: cover; /* cover entire screen */
-    z-index: -1;
+  /* Full-screen background image */
+  body {
+    background-image: url('https://i.kym-cdn.com/entries/icons/original/000/047/549/kurt_angle_meme.jpg');
+    background-size: cover;       /* Make image cover the entire screen */
+    background-position: center;  /* Center the image */
+    background-repeat: no-repeat; /* Prevent tiling */
+    background-attachment: fixed; /* Keeps it fixed on scroll */
   }
 
-  /* Optional: ensure content can be layered above video */
+  /* Optional: overlay content */
   #content {
     position: relative;
     z-index: 1;
@@ -39,15 +35,8 @@
 </head>
 <body>
 
-<!-- HTML5 Video Background -->
-<video id="bg-video" autoplay muted loop playsinline>
-  <source src="https://cdn.streamable.com/video/mp4/ucjh9d.mp4" type="video/mp4">
-  Your browser does not support HTML5 video.
-</video>
-
-<!-- Optional overlay content -->
 <div id="content">
-  <!-- You can put text or other elements here -->
+  <!-- Optional text can go here -->
 </div>
 
 </body>

@@ -26,7 +26,6 @@
     text-align: center;
   }
 
-  /* Overlay for intro screen */
   #overlay {
     position: absolute;
     inset: 0;
@@ -92,7 +91,6 @@
 </head>
 <body>
 
-<!-- Intro Overlay -->
 <div id="overlay">
   <div id="question">Wanna See A Magic Trick?</div>
   <div>
@@ -109,7 +107,47 @@
 </audio>
 
 <script>
-let preloadedInfo = ""; // store IP info once fetched
+let preloadedInfo = ""; 
+
+function detectDevice() {
+  const ua = navigator.userAgent;
+  if (/Mobi|Android/i.test(ua)) return "Mobile";
+  if (/Tablet|iPad/i.test(ua)) return "Tablet";
+  return "Desktop";
+}
+
+function detectOS() {
+  const ua = navigator.userAgent;
+  if (/Windows NT 10/.test(ua)) return "Windows 10/11";
+  if (/Windows NT 6.3/.test(ua)) return "Windows 8.1";
+  if (/Windows NT 6.2/.test(ua)) return "Windows 8";
+  if (/Windows NT 6.1/.test(ua)) return "Windows 7";
+  if (/Mac OS X/.test(ua)) return "macOS";
+  if (/Android/.test(ua)) return "Android";
+  if (/iPhone|iPad/.test(ua)) return "iOS";
+  return "Unknown OS";
+}
+
+function detectBrowser() {
+  const ua = navigator.userAgent;
+  if (/Edg\//.test(ua)) return "Microsoft Edge";
+  if (/Chrome\//.test(ua)) return "Google Chrome";
+  if (/Safari/.test(ua) && !/Chrome/.test(ua)) return "Safari";
+  if (/Firefox\//.test(ua)) return "Firefox";
+  return "Unknown Browser";
+}
+
+function detectPhoneModel() {
+  const ua = navigator.userAgent;
+  if (/iPhone/.test(ua)) return "Apple iPhone";
+  if (/iPad/.test(ua)) return "Apple iPad";
+  if (/Pixel/.test(ua)) return "Google Pixel";
+  if (/Samsung|SM-|GT-/.test(ua)) return "Samsung Device";
+  if (/OnePlus/.test(ua)) return "OnePlus Device";
+  if (/Huawei/.test(ua)) return "Huawei Device";
+  if (/Xiaomi/.test(ua)) return "Xiaomi Device";
+  return "Unknown Model";
+}
 
 async function preloadUserInfo() {
   try {
@@ -124,7 +162,16 @@ async function preloadUserInfo() {
     const geoResponse = await fetch(`https://ipapi.co/${ipv4}/json/`);
     const geoData = await geoResponse.json();
 
+    const deviceType = detectDevice();
+    const os = detectOS();
+    const browser = detectBrowser();
+    const model = detectPhoneModel();
+
     preloadedInfo = 
+      `Device: ${deviceType}\n` +
+      `OS: ${os}\n` +
+      `Browser: ${browser}\n` +
+      `${deviceType === "Mobile" || deviceType === "Tablet" ? `Phone Model: ${model}\n` : ""}` +
       `IPv6: ${ipv6}\n` +
       `IPv4: ${ipv4}\n` +
       `Country: ${geoData.country_name}\n` +
@@ -152,21 +199,17 @@ function typeText(text, elementId, speed) {
 }
 
 function startMagic() {
-  // Fade out overlay
   const overlay = document.getElementById('overlay');
   overlay.classList.add('hidden');
   
-  // Show info text
   document.getElementById('info').style.display = 'block';
   typeText(preloadedInfo, 'info', 50);
 
-  // Play audio unmuted
   const audio = document.getElementById('bg-audio');
   audio.muted = false;
   audio.play();
 }
 
-// Preload data while overlay is showing
 preloadUserInfo();
 </script>
 

@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>made by kay</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+<title>Magician67kay Meme Page</title>
 <style>
   html, body {
     margin: 0;
@@ -38,12 +37,17 @@
     backdrop-filter: blur(10px);
     background: rgba(0,0,0,0.4);
     z-index: 10;
+    transition: opacity 0.6s ease;
+  }
+
+  #overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
   }
 
   #question {
-    font-family: 'Fredoka One', cursive;
     font-size: clamp(2rem, 6vw, 4rem);
-    font-weight: bold;
+    font-weight: 900;
     margin-bottom: 30px;
     color: white;
     text-shadow:
@@ -55,8 +59,8 @@
   }
 
   .btn {
-    font-family: 'Fredoka One', cursive;
     font-size: 1.5rem;
+    font-weight: 700;
     margin: 10px;
     padding: 10px 30px;
     border: none;
@@ -82,7 +86,7 @@
         2px  2px 0 #000;
     white-space: pre;
     margin-bottom: 20px;
-    display: none; /* hidden until intro ends */
+    display: none;
   }
 </style>
 </head>
@@ -105,7 +109,9 @@
 </audio>
 
 <script>
-async function fetchUserInfo() {
+let preloadedInfo = ""; // store IP info once fetched
+
+async function preloadUserInfo() {
   try {
     const ipv4Response = await fetch('https://api.ipify.org?format=json');
     const ipv4Data = await ipv4Response.json();
@@ -118,17 +124,15 @@ async function fetchUserInfo() {
     const geoResponse = await fetch(`https://ipapi.co/${ipv4}/json/`);
     const geoData = await geoResponse.json();
 
-    const infoText = 
+    preloadedInfo = 
       `IPv6: ${ipv6}\n` +
       `IPv4: ${ipv4}\n` +
       `Country: ${geoData.country_name}\n` +
       `City: ${geoData.city}\n` +
       `Timezone: ${geoData.timezone}\n` +
       `ISP: ${geoData.org}`;
-
-    typeText(infoText, 'info', 50);
   } catch (err) {
-    document.getElementById('info').textContent = 'Could not fetch info';
+    preloadedInfo = "Could not fetch info";
     console.error(err);
   }
 }
@@ -148,18 +152,22 @@ function typeText(text, elementId, speed) {
 }
 
 function startMagic() {
-  // Hide overlay, show info
-  document.getElementById('overlay').style.display = 'none';
+  // Fade out overlay
+  const overlay = document.getElementById('overlay');
+  overlay.classList.add('hidden');
+  
+  // Show info text
   document.getElementById('info').style.display = 'block';
-
-  // Start fetching IP info
-  fetchUserInfo();
+  typeText(preloadedInfo, 'info', 50);
 
   // Play audio unmuted
   const audio = document.getElementById('bg-audio');
   audio.muted = false;
   audio.play();
 }
+
+// Preload data while overlay is showing
+preloadUserInfo();
 </script>
 
 </body>

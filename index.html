@@ -1,36 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Magician67kay Video Background</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-      background: black;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magician67kay Video Background</title>
+<style>
+  /* Make page fill the screen */
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: black;
+  }
 
-    #bg-video {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      width: 177.77vh; /* ensures 16:9 video covers screen */
-      height: 100vh;
-      transform: translate(-50%, -50%);
-      object-fit: cover;
-      z-index: -1;
-    }
-  </style>
+  /* Make the YouTube iframe cover the screen */
+  #bg-video {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 177.78vh; /* 16:9 ratio to cover height */
+    height: 100vh;
+    transform: translate(-50%, -50%);
+    pointer-events: none; /* so clicks go through */
+    z-index: -1;
+  }
+</style>
 </head>
 <body>
 
-  <video id="bg-video" autoplay muted loop playsinline>
-    <source src="https://raw.githubusercontent.com/magician67kay/magician67kay.github.io/main/a.mp4" type="video/mp4">
-    Your browser does not support HTML5 video.
-  </video>
+<!-- YouTube video as background -->
+<iframe
+  id="bg-video"
+  src="https://www.youtube.com/embed/IgJkZ6LiCBk?autoplay=1&mute=1&loop=1&playlist=IgJkZ6LiCBk&controls=0&modestbranding=1&rel=0&showinfo=0"
+  frameborder="0"
+  allow="autoplay; fullscreen"
+  allowfullscreen>
+</iframe>
 
 </body>
 </html>

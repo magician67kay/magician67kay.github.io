@@ -13,25 +13,24 @@
       background: black;
     }
 
-    /* Full-screen responsive YouTube video */
-    .video-bg {
+    /* Full-screen video */
+    #bg-video {
       position: fixed;
       top: 50%;
       left: 50%;
-      width: 177.77vh; /* 100 * 16/9 to cover full screen */
+      width: 177.77vh; /* ensures 16:9 video covers screen */
       height: 100vh;
       transform: translate(-50%, -50%);
-      pointer-events: none;
+      object-fit: cover; /* cover entire screen */
       z-index: -1;
     }
   </style>
 </head>
 <body>
-  <iframe class="video-bg"
-    src="https://www.youtube.com/embed/AYpjZbD6IMo?autoplay=1&mute=1&loop=1&playlist=AYpjZbD6IMo&controls=0&showinfo=0&modestbranding=1&rel=0&enablejsapi=1"
-    frameborder="0"
-    allow="autoplay; fullscreen"
-    allowfullscreen>
-  </iframe>
+  <!-- HTML5 Video -->
+  <video id="bg-video" autoplay muted loop playsinline>
+    <source src="1k yard stare meme template _soldier death stare meme template _1000 yard stare meme template (16_9).mp4" type="video/mp4">
+    Your browser does not support HTML5 video.
+  </video>
 </body>
 </html>

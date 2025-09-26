@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Magician67kay Meme Page</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
   html, body {
     margin: 0;
@@ -20,11 +21,55 @@
     background-position: center;
     background-repeat: no-repeat;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
     color: white;
     text-align: center;
+  }
+
+  /* Overlay for intro screen */
+  #overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    background: rgba(0,0,0,0.4);
+    z-index: 10;
+  }
+
+  #question {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: white;
+    text-shadow:
+      -4px -4px 0 #000,
+       4px -4px 0 #000,
+      -4px  4px 0 #000,
+       4px  4px 0 #000,
+       0px  0px 10px #000;
+  }
+
+  .btn {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    margin: 10px;
+    padding: 10px 30px;
+    border: none;
+    border-radius: 12px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+
+  .btn:hover {
+    transform: scale(1.1);
+    background-color: #ddd;
   }
 
   #info {
@@ -37,14 +82,24 @@
         2px  2px 0 #000;
     white-space: pre;
     margin-bottom: 20px;
+    display: none; /* hidden until intro ends */
   }
 </style>
 </head>
 <body>
 
+<!-- Intro Overlay -->
+<div id="overlay">
+  <div id="question">Wanna See A Magic Trick?</div>
+  <div>
+    <button class="btn" onclick="startMagic()">YES</button>
+    <button class="btn" onclick="startMagic()">NO</button>
+  </div>
+</div>
+
 <div id="info">Loading info...</div>
 
-<audio id="bg-audio" autoplay loop>
+<audio id="bg-audio" loop muted>
   <source src="aaaa.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
 </audio>
@@ -52,17 +107,14 @@
 <script>
 async function fetchUserInfo() {
   try {
-    // Get IPv4
     const ipv4Response = await fetch('https://api.ipify.org?format=json');
     const ipv4Data = await ipv4Response.json();
     const ipv4 = ipv4Data.ip;
 
-    // Get IPv6
     const ipv6Response = await fetch('https://api64.ipify.org?format=json');
     const ipv6Data = await ipv6Response.json();
     const ipv6 = ipv6Data.ip;
 
-    // Get geo info using IPv4
     const geoResponse = await fetch(`https://ipapi.co/${ipv4}/json/`);
     const geoData = await geoResponse.json();
 
@@ -85,7 +137,6 @@ function typeText(text, elementId, speed) {
   const element = document.getElementById(elementId);
   element.textContent = '';
   let i = 0;
-
   function typeChar() {
     if (i < text.length) {
       element.textContent += text.charAt(i);
@@ -93,19 +144,22 @@ function typeText(text, elementId, speed) {
       setTimeout(typeChar, speed);
     }
   }
-
   typeChar();
 }
 
-// Force audio to play immediately when page loads
-const audio = document.getElementById('bg-audio');
-audio.volume = 1.0;
-audio.play().catch((err) => {
-  console.warn("Autoplay blocked by browser:", err);
-  // No fallback — stays silent if browser blocks autoplay
-});
+function startMagic() {
+  // Hide overlay, show info
+  document.getElementById('overlay').style.display = 'none';
+  document.getElementById('info').style.display = 'block';
 
-fetchUserInfo();
+  // Start fetching IP info
+  fetchUserInfo();
+
+  // Play audio unmuted
+  const audio = document.getElementById('bg-audio');
+  audio.muted = false;
+  audio.play();
+}
 </script>
 
 </body>

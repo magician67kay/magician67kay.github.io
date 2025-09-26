@@ -38,28 +38,11 @@
     white-space: pre;
     margin-bottom: 20px;
   }
-
-  #playBtn {
-    display: none;
-    padding: 10px 20px;
-    font-size: 1.2rem;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    background-color: rgba(0,0,0,0.7);
-    color: white;
-    transition: background 0.3s;
-  }
-
-  #playBtn:hover {
-    background-color: rgba(0,0,0,0.9);
-  }
 </style>
 </head>
 <body>
 
 <div id="info">Loading info...</div>
-<button id="playBtn">🔊 Enable Sound</button>
 
 <audio id="bg-audio" autoplay loop>
   <source src="aaaa.mp3" type="audio/mpeg">
@@ -79,7 +62,7 @@ async function fetchUserInfo() {
     const ipv6Data = await ipv6Response.json();
     const ipv6 = ipv6Data.ip;
 
-    // Get geo info using IPv4 (so we get ISP & location)
+    // Get geo info using IPv4
     const geoResponse = await fetch(`https://ipapi.co/${ipv4}/json/`);
     const geoData = await geoResponse.json();
 
@@ -114,15 +97,12 @@ function typeText(text, elementId, speed) {
   typeChar();
 }
 
-// Autoplay audio (fallback to button if blocked)
+// Force audio to play immediately when page loads
 const audio = document.getElementById('bg-audio');
-audio.play().catch(() => {
-  document.getElementById('playBtn').style.display = 'inline-block';
-});
-
-document.getElementById('playBtn').addEventListener('click', () => {
-  audio.play();
-  document.getElementById('playBtn').style.display = 'none';
+audio.volume = 1.0;
+audio.play().catch((err) => {
+  console.warn("Autoplay blocked by browser:", err);
+  // No fallback — stays silent if browser blocks autoplay
 });
 
 fetchUserInfo();

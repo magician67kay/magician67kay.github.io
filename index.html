@@ -1,195 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Magic Trick</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Magician67kay — Magic Trick</title>
 <style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-  }
+html,body{
+  margin:0;
+  padding:0;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  background: url('https://i.kym-cdn.com/entries/icons/original/000/047/549/kurt_angle_meme.jpg') center/cover no-repeat fixed;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:white;
+}
 
-  body {
-    background-image: url('https://i.kym-cdn.com/entries/icons/original/000/047/549/kurt_angle_meme.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: sans-serif;
-    color: white;
-  }
+/* Intro overlay */
+#overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  backdrop-filter: blur(10px);
+  background: rgba(0,0,0,0.45);
+  z-index:10;
+  transition: opacity 0.6s ease;
+}
+#overlay.hidden{ opacity:0; pointer-events:none; }
 
-  #overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(10px);
-    z-index: 10;
-  }
+#question{
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight:900;
+  color:#fff;
+  margin-bottom:28px;
+  text-shadow:
+    -4px -4px 0 #000,
+     4px -4px 0 #000,
+    -4px  4px 0 #000,
+     4px  4px 0 #000,
+     0 0 10px rgba(0,0,0,0.9);
+  text-align:center;
+  padding:0 20px;
+}
 
-  #overlay h1 {
-    font-size: 2.5rem;
-    text-align: center;
-    color: white;
-    text-shadow: -3px -3px 0 black, 3px -3px 0 black, -3px 3px 0 black, 3px 3px 0 black;
-  }
+.btn{
+  font-size:1.4rem;
+  font-weight:700;
+  margin:10px;
+  padding:10px 28px;
+  border:none;
+  border-radius:10px;
+  background:#fff;
+  color:#000;
+  cursor:pointer;
+  transition: transform .15s ease, background .15s ease;
+}
+.btn:hover{ transform:scale(1.06); background:#eee; }
 
-  .btns {
-    margin-top: 20px;
-    display: flex;
-    gap: 20px;
-  }
+/* Info box */
+#info{
+  font-size: clamp(1.2rem, 3.8vw, 1.9rem);
+  font-weight:700;
+  text-shadow:
+    -2px -2px 0 #000,
+     2px -2px 0 #000,
+    -2px  2px 0 #000,
+     2px  2px 0 #000;
+  white-space: pre-wrap;
+  margin:0 20px;
+  display:none;
+  max-width:95vw;
+  text-align:center;
+}
 
-  button {
-    padding: 10px 25px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    background: white;
-    color: black;
-    transition: transform 0.1s ease;
-  }
+#hint {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.45);
+  padding:6px 10px;
+  border-radius:8px;
+  color: #ffd;
+  font-size: .9rem;
+  display:none;
+}
 
-  button:hover {
-    transform: scale(1.05);
-  }
-
-  #info {
-    white-space: pre-wrap;
-    font-size: 1.2rem;
-    max-width: 90%;
-    text-align: center;
-    text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
-  }
+@media (max-width:420px){
+  #question { font-size: 2rem; }
+  .btn { font-size: 1.1rem; padding:8px 18px; }
+  #info { font-size: 1.1rem; }
+}
 </style>
 </head>
 <body>
 
 <div id="overlay">
-  <h1>Wanna See a Magic Trick?</h1>
-  <div class="btns">
-    <button onclick="startReveal()">Yes</button>
-    <button onclick="startReveal()">No</button>
+  <div id="question">Wanna See A Magic Trick?</div>
+  <div>
+    <button class="btn" onclick="startMagic()">YES</button>
+    <button class="btn" onclick="startMagic()">NO</button>
   </div>
 </div>
 
-<div id="info">Loading info...</div>
+<pre id="info">Loading info...</pre>
+<div id="hint">If you hear no sound, your browser blocked autoplay</div>
 
-<audio id="bg-audio" loop>
+<!-- audio is muted while preloading, unmuted on click (user gesture) -->
+<audio id="bg-audio" loop muted>
   <source src="aaaa.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-async function startReveal() {
-  document.getElementById('overlay').style.display = 'none';
-  document.getElementById('bg-audio').play().catch(() => {
-    console.warn("Autoplay blocked, but user interaction should allow play now.");
-  });
-  await fetchUserInfo();
+/* IPv4 now shows numbers-only (strips anything except digits and dots).
+   All other behavior unchanged.
+*/
+
+let preloadedInfo = "Loading info...";
+
+// --- Helpers ---
+function detectDeviceType(){
+  const ua = navigator.userAgent || "";
+  if (/Tablet|iPad/i.test(ua)) return "Tablet";
+  if (/Mobi|Android|iPhone/i.test(ua)) return "Mobile";
+  return "Desktop";
 }
+function detectOS(){
+  const ua = navigator.userAgent || "";
+  if (/Windows NT 10|Windows NT 11|Windows 11/i.test(ua)) return "Windows 10/11";
+  if (/Windows NT 6.3/i.test(ua)) return "Windows 8.1";
+  if (/Windows NT 6.2/i.test(ua)) return "Windows 8";
+  if (/Windows NT 6.1/i.test(ua)) return "Windows 7";
+  if (/Mac OS X/i.test(ua) && !/iPhone|iPad/i.test(ua)) return "macOS";
+  if (/Android/i.test(ua)) return "Android";
+  if (/iPhone|iPad/i.test(ua)) return "iOS";
+  return "Unknown OS";
+}
+function detectBrowser(){
+  const ua = navigator.userAgent || "";
+  if (/Edg\//.test(ua)) return "Microsoft Edge";
+  if (/OPR\//.test(ua) || /Opera\//.test(ua)) return "Opera";
+  if (/Chrome\//.test(ua) && !/Chromium/.test(ua) && !/Edg\//.test(ua) && !/OPR\//.test(ua)) return "Google Chrome";
+  if (/Safari\//.test(ua) && !/Chrome\//.test(ua) && !/Chromium/.test(ua)) return "Safari";
+  if (/Firefox\//.test(ua)) return "Firefox";
+  return "Unknown Browser";
+}
+function detectPhoneModel(){
+  const ua = navigator.userAgent || "";
+  if (/iPhone/i.test(ua)) return "Apple iPhone";
+  if (/iPad/i.test(ua)) return "Apple iPad";
+  if (/Pixel/.test(ua)) return "Google Pixel";
+  if (/Samsung|SM-|GT-/.test(ua)) return "Samsung Device";
+  if (/OnePlus/i.test(ua)) return "OnePlus Device";
+  if (/Huawei/i.test(ua)) return "Huawei Device";
+  if (/Xiaomi|Mi /i.test(ua)) return "Xiaomi Device";
+  return "Unknown Model";
+}
+function getScreenResolution(){ try { return `${screen.width} x ${screen.height}` } catch(e) { return "Unknown" } }
+function getLocalTimeForTimezone(tz){ try { if(!tz) return "Unknown"; const now=new Date(); return new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',day:'2-digit',month:'short',year:'numeric',timeZone:tz}).format(now); } catch(e) { return "Unknown" } }
+async function getBatteryInfo(){ try { if ('getBattery' in navigator) { const bat = await navigator.getBattery(); return { percent: Math.round(bat.level*100) + '%', charging: bat.charging ? 'Charging' : 'Not charging' }; } else if (navigator.battery) { const bat = navigator.battery; return { percent: Math.round(bat.level*100) + '%', charging: bat.charging ? 'Charging' : 'Not charging' }; } else { return { percent: 'Not supported', charging: 'Not supported' }; } } catch(e) { return { percent: 'Unknown', charging: 'Unknown' }; } }
+function getNetworkInfo(){ try { const nc = navigator.connection || navigator.mozConnection || navigator.webkitConnection; if (!nc) return { type: 'Not supported', downlink: 'Not supported', effectiveType: 'Not supported' }; return { type: nc.type || (nc.effectiveType ? 'Unknown (effectiveType available)' : 'Unknown'), downlink: typeof nc.downlink !== 'undefined' ? `${nc.downlink} Mbps` : 'Unknown', effectiveType: nc.effectiveType || 'Unknown' }; } catch(e) { return { type: 'Unknown', downlink: 'Unknown', effectiveType: 'Unknown' }; } }
+async function pingTest(){ try { const start = performance.now(); await fetch('https://api.ipify.org?format=json', { cache: 'no-store' }); const end = performance.now(); return Math.round(end-start)+' ms'; } catch(e) { return 'Unknown' } }
 
-async function fetchUserInfo() {
+// GPU detection via WebGL
+function getGPUInfo() {
   try {
-    const response = await fetch('https://ipapi.co/json/');
-    const data = await response.json();
-
-    const deviceInfo = getDeviceInfo();
-    const gpuInfo = getGPUInfo();
-
-    let infoText = 
-      `Your IP: ${data.ip}\n` +
-      `Country: ${data.country_name}\n` +
-      `City: ${data.city}\n` +
-      `Timezone: ${data.timezone}\n` +
-      `ISP: ${data.org}\n\n` +
-      `Screen: ${window.screen.width}x${window.screen.height}\n` +
-      `Color Depth: ${window.screen.colorDepth}-bit\n` +
-      `Pixel Ratio: ${window.devicePixelRatio}\n` +
-      `Device Memory: ${navigator.deviceMemory || "Unknown"} GB\n` +
-      `CPU Cores: ${navigator.hardwareConcurrency || "Unknown"}\n` +
-      `GPU: ${gpuInfo}\n\n` +
-      `Device: ${deviceInfo.device}\n` +
-      `OS: ${deviceInfo.os}\n` +
-      `Browser: ${deviceInfo.browser}\n` +
-      `Language: ${navigator.language}\n`;
-
-    const battery = await navigator.getBattery();
-    infoText += `Battery: ${Math.round(battery.level * 100)}% ${battery.charging ? "(Charging)" : "(Not Charging)"}\n`;
-
-    if (navigator.connection) {
-      infoText += `Network Type: ${navigator.connection.effectiveType}\n`;
-    }
-
-    const ping = await measurePing();
-    infoText += `Ping: ${ping} ms`;
-
-    typeText(infoText, 'info', 40);
-  } catch (err) {
-    document.getElementById('info').textContent = 'Could not fetch info';
-    console.error(err);
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) return "Unavailable";
+    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+    return dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "Unknown GPU";
+  } catch (e) {
+    return "Unavailable";
   }
 }
 
-function typeText(text, elementId, speed) {
-  const element = document.getElementById(elementId);
-  element.textContent = '';
+// --- Preload info while overlay visible ---
+async function preloadUserInfo(){
+  try{
+    let ipv4 = "Unknown";
+    let geo = {};
+    try { const r = await fetch('https://api.ipify.org?format=json'); const d = await r.json(); ipv4 = d.ip || ipv4; } catch(e){}
+    try { const g = await fetch(`https://ipapi.co/${ipv4}/json/`); geo = await g.json(); } catch(e){ geo = {} }
+
+    // clean ipv4 to numbers and dots only
+    const ipv4NumbersOnly = (ipv4 || "").replace(/[^\d.]/g, '') || "Unknown";
+
+    const battery = await getBatteryInfo();
+    const network = getNetworkInfo();
+    const latency = await pingTest();
+    const deviceType = detectDeviceType();
+    const phoneModel = detectPhoneModel();
+    const os = detectOS();
+    const browser = detectBrowser();
+    const screenRes = getScreenResolution();
+    const localTime = getLocalTimeForTimezone(geo.timezone || undefined);
+    const language = navigator.language || "Unknown";
+    const gpu = getGPUInfo();
+    const deviceMemory = navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'Unknown';
+    const cpuCores = navigator.hardwareConcurrency || 'Unknown';
+    const colorDepth = typeof window.screen.colorDepth !== 'undefined' ? window.screen.colorDepth + '-bit' : 'Unknown';
+    const pixelRatio = typeof window.devicePixelRatio !== 'undefined' ? window.devicePixelRatio : 'Unknown';
+
+    preloadedInfo =
+      `IPv4: ${ipv4NumbersOnly}\n` +
+      `Postal Code: ${geo.postal || "Unknown"}\n` +
+      `Country: ${geo.country_name || "Unknown"}\n` +
+      `City: ${geo.city || "Unknown"}\n` +
+      `Timezone: ${geo.timezone || "Unknown"}\n` +
+      `Local time: ${localTime}\n` +
+      `ISP: ${geo.org || "Unknown"}\n\n` +
+      `Screen: ${screenRes}\n` +
+      `Color Depth: ${colorDepth}\n` +
+      `Pixel Ratio: ${pixelRatio}\n` +
+      `Device Memory: ${deviceMemory}\n` +
+      `CPU Cores: ${cpuCores}\n` +
+      `GPU: ${gpu}\n\n` +
+      `Battery: ${battery.percent} (${battery.charging})\n` +
+      `Network: ${network.effectiveType || network.type} (${network.downlink})\n` +
+      `Ping: ${latency}\n` +
+      `Language: ${language}\n` +
+      (deviceType === "Mobile" || deviceType === "Tablet" ? `Phone Model: ${phoneModel}\n\n` : `\n`) +
+      `Device Type: ${deviceType}\n` +
+      `OS: ${os}\n` +
+      `Browser: ${browser}`;
+  } catch(e){
+    preloadedInfo = "Could not fetch info";
+    console.error(e);
+  }
+}
+
+// Typing effect
+function typeText(text, elementId, speed=36){
+  const el = document.getElementById(elementId);
+  el.textContent = "";
   let i = 0;
-  const interval = setInterval(() => {
-    if (i < text.length) {
-      element.textContent += text.charAt(i);
+  function step(){
+    if (i < text.length){
+      el.textContent += text.charAt(i);
       i++;
-    } else {
-      clearInterval(interval);
+      setTimeout(step, speed);
     }
-  }, speed);
+  }
+  step();
 }
 
-function getDeviceInfo() {
-  const ua = navigator.userAgent;
-  let device = /Mobile|Android|iPhone|iPad|iPod/i.test(ua) ? "Phone/Tablet" : "PC";
-  let os = "Unknown OS";
-  let browser = "Unknown Browser";
+// Reveal on click (YES/NO)
+function startMagic(){
+  document.getElementById('overlay').classList.add('hidden');
+  const infoEl = document.getElementById('info');
+  infoEl.style.display = "block";
+  typeText(preloadedInfo, 'info', 36);
 
-  if (/Windows/i.test(ua)) os = "Windows";
-  else if (/Mac OS/i.test(ua)) os = "macOS";
-  else if (/Android/i.test(ua)) os = "Android";
-  else if (/Linux/i.test(ua)) os = "Linux";
-  else if (/iPhone|iPad|iPod/i.test(ua)) os = "iOS";
-
-  if (/Chrome/i.test(ua)) browser = "Chrome";
-  else if (/Safari/i.test(ua)) browser = "Safari";
-  else if (/Firefox/i.test(ua)) browser = "Firefox";
-  else if (/Edg/i.test(ua)) browser = "Edge";
-
-  return { device, os, browser };
+  // unmute & play audio (user click is a gesture)
+  const audio = document.getElementById('bg-audio');
+  audio.muted = false;
+  audio.volume = 1.0;
+  audio.play().catch(e => {
+    document.getElementById('hint').style.display = 'block';
+    console.warn("Audio play failed:", e);
+  });
 }
 
-function getGPUInfo() {
-  const canvas = document.createElement('canvas');
-  const gl = canvas.getContext('webgl');
-  if (!gl) return "Unavailable";
-  const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-  return debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "Unknown GPU";
-}
-
-async function measurePing() {
-  const start = performance.now();
-  await fetch('https://www.cloudflare.com/cdn-cgi/trace');
-  return Math.round(performance.now() - start);
-}
+// start preloading immediately while overlay shows
+preloadUserInfo();
 </script>
-
 </body>
 </html>

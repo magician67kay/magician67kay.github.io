@@ -5,101 +5,90 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Magician67kay Meme Page</title>
 <style>
-  html,body{
-    margin:0;
-    padding:0;
-    width:100vw;
-    height:100vh;
-    overflow:hidden;
-    font-family: Arial, Helvetica, sans-serif;
-    background: url('https://i.kym-cdn.com/entries/icons/original/000/047/549/kurt_angle_meme.jpg') center/cover no-repeat fixed;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    color:white;
-  }
-
-  /* Intro overlay */
-  #overlay{
-    position:absolute;
-    inset:0;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    backdrop-filter: blur(10px);
-    background: rgba(0,0,0,0.45);
-    z-index:10;
-    transition: opacity 0.6s ease;
-  }
-  #overlay.hidden{
-    opacity:0;
-    pointer-events:none;
-  }
-
-  #question{
-    font-size: clamp(2rem, 6vw, 4rem);
-    font-weight:900;
-    color:#fff;
-    margin-bottom:28px;
-    text-shadow:
-      -4px -4px 0 #000,
-       4px -4px 0 #000,
-      -4px  4px 0 #000,
-       4px  4px 0 #000,
-       0 0 10px rgba(0,0,0,0.9);
-    text-align:center;
-    padding: 0 20px;
-  }
-
-  .btn{
-    font-size:1.4rem;
-    font-weight:700;
-    margin:10px;
-    padding:10px 28px;
-    border:none;
-    border-radius:10px;
-    background:#fff;
-    color:#000;
-    cursor:pointer;
-    transition: transform .15s ease, background .15s ease;
-  }
-  .btn:hover{ transform:scale(1.06); background:#eee; }
-
-  /* Info box */
-  #info{
-    font-size: clamp(1.4rem, 4.2vw, 2.0rem);
-    font-weight:700;
-    text-shadow:
-      -2px -2px 0 #000,
-       2px -2px 0 #000,
-      -2px  2px 0 #000,
-       2px  2px 0 #000;
-    white-space: pre-wrap;
-    margin: 0 20px;
-    display:none;
-    max-width: 95vw;
-    text-align:center;
-  }
-
-  #hint {
-    position: absolute;
-    bottom: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0,0,0,0.45);
-    padding:6px 10px;
-    border-radius:8px;
-    color: #ffd;
-    font-size: .9rem;
-    display:none;
-  }
-
-  @media (max-width:420px){
-    #question { font-size: 2rem; }
-    .btn { font-size: 1.1rem; padding:8px 18px; }
-    #info { font-size: 1.1rem; }
-  }
+html,body{
+  margin:0;
+  padding:0;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  background: url('https://i.kym-cdn.com/entries/icons/original/000/047/549/kurt_angle_meme.jpg') center/cover no-repeat fixed;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:white;
+}
+#overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  backdrop-filter: blur(10px);
+  background: rgba(0,0,0,0.45);
+  z-index:10;
+  transition: opacity 0.6s ease;
+}
+#overlay.hidden{opacity:0; pointer-events:none;}
+#question{
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight:900;
+  color:#fff;
+  margin-bottom:28px;
+  text-shadow:
+    -4px -4px 0 #000,
+     4px -4px 0 #000,
+    -4px  4px 0 #000,
+     4px  4px 0 #000,
+     0 0 10px rgba(0,0,0,0.9);
+  text-align:center;
+  padding:0 20px;
+}
+.btn{
+  font-size:1.4rem;
+  font-weight:700;
+  margin:10px;
+  padding:10px 28px;
+  border:none;
+  border-radius:10px;
+  background:#fff;
+  color:#000;
+  cursor:pointer;
+  transition: transform .15s ease, background .15s ease;
+}
+.btn:hover{ transform:scale(1.06); background:#eee; }
+#info{
+  font-size: clamp(1.4rem, 4.2vw, 2.0rem);
+  font-weight:700;
+  text-shadow:
+    -2px -2px 0 #000,
+     2px -2px 0 #000,
+    -2px  2px 0 #000,
+     2px  2px 0 #000;
+  white-space: pre-wrap;
+  margin:0 20px;
+  display:none;
+  max-width:95vw;
+  text-align:center;
+}
+#hint {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.45);
+  padding:6px 10px;
+  border-radius:8px;
+  color: #ffd;
+  font-size: .9rem;
+  display:none;
+}
+@media (max-width:420px){
+  #question { font-size: 2rem; }
+  .btn { font-size: 1.1rem; padding:8px 18px; }
+  #info { font-size: 1.1rem; }
+}
 </style>
 </head>
 <body>
@@ -113,219 +102,112 @@
 </div>
 
 <pre id="info">Loading info...</pre>
-
 <div id="hint">If you hear no sound, your browser blocked autoplay</div>
 
-<!-- audio: muted while preloading, unmuted on click (user gesture) -->
 <audio id="bg-audio" loop muted>
   <source src="aaaa.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
 </audio>
 
 <script>
-/* Preload user info (IPs, geo, device/browser/os, screen, battery, network)
-   while the overlay is visible. On click, reveal instantly and play audio.
-*/
-
 let preloadedInfo = "Loading info...";
 
-// ---------- Detection helpers ----------
-function detectDeviceType() {
-  const ua = navigator.userAgent || "";
-  if (/Tablet|iPad/i.test(ua)) return "Tablet";
-  if (/Mobi|Android|iPhone/i.test(ua)) return "Mobile";
-  return "Desktop";
+function detectDeviceType(){
+  const ua=navigator.userAgent||"";
+  if(/Tablet|iPad/i.test(ua))return"Tablet";
+  if(/Mobi|Android|iPhone/i.test(ua))return"Mobile";
+  return"Desktop";
+}
+function detectOS(){
+  const ua=navigator.userAgent||"";
+  if(/Windows NT 10|Windows NT 11|Windows 11/i.test(ua))return"Windows 10/11";
+  if(/Windows NT 6.3/i.test(ua))return"Windows 8.1";
+  if(/Windows NT 6.2/i.test(ua))return"Windows 8";
+  if(/Windows NT 6.1/i.test(ua))return"Windows 7";
+  if(/Mac OS X/i.test(ua)&&!/iPhone|iPad/i.test(ua))return"macOS";
+  if(/Android/i.test(ua))return"Android";
+  if(/iPhone|iPad/i.test(ua))return"iOS";
+  return"Unknown OS";
+}
+function detectBrowser(){
+  const ua=navigator.userAgent||"";
+  if(/Edg\//.test(ua))return"Microsoft Edge";
+  if(/OPR\//.test(ua)||/Opera\//.test(ua))return"Opera";
+  if(/Chrome\//.test(ua)&&!/Chromium/.test(ua)&&!/Edg\//.test(ua)&&!/OPR\//.test(ua))return"Google Chrome";
+  if(/Safari\//.test(ua)&&!/Chrome\//.test(ua)&&!/Chromium/.test(ua))return"Safari";
+  if(/Firefox\//.test(ua))return"Firefox";
+  return"Unknown Browser";
+}
+function detectPhoneModel(){
+  const ua=navigator.userAgent||"";
+  if(/iPhone/i.test(ua))return"Apple iPhone";
+  if(/iPad/i.test(ua))return"Apple iPad";
+  if(/Pixel/.test(ua))return"Google Pixel";
+  if(/Samsung|SM-|GT-/.test(ua))return"Samsung Device";
+  if(/OnePlus/i.test(ua))return"OnePlus Device";
+  if(/Huawei/i.test(ua))return"Huawei Device";
+  if(/Xiaomi|Mi /i.test(ua))return"Xiaomi Device";
+  return"Unknown Model";
+}
+function getScreenResolution(){try{return`${screen.width} x ${screen.height}`}catch(e){return"Unknown"}}
+function getLocalTimeForTimezone(tz){try{if(!tz)return"Unknown";const now=new Date();return new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',day:'2-digit',month:'short',year:'numeric',timeZone:tz}).format(now);}catch(e){return"Unknown"}}
+async function getBatteryInfo(){try{if('getBattery'in navigator){const bat=await navigator.getBattery();return{percent:Math.round(bat.level*100)+'%',charging:bat.charging?'Charging':'Not charging'}}else if(navigator.battery){const bat=navigator.battery;return{percent:Math.round(bat.level*100)+'%',charging:bat.charging?'Charging':'Not charging'}}else{return{percent:'Not supported',charging:'Not supported'}}}catch(e){return{percent:'Unknown',charging:'Unknown'}}}
+function getNetworkInfo(){try{const nc=navigator.connection||navigator.mozConnection||navigator.webkitConnection;if(!nc)return{type:'Not supported',downlink:'Not supported',effectiveType:'Not supported'};return{type:nc.type||(nc.effectiveType?'Unknown (effectiveType available)':'Unknown'),downlink:typeof nc.downlink!=='undefined'?`${nc.downlink} Mbps`:'Unknown',effectiveType:nc.effectiveType||'Unknown'}}catch(e){return{type:'Unknown',downlink:'Unknown',effectiveType:'Unknown'}}}
+async function pingTest(){
+  try{
+    const start=performance.now();
+    await fetch('https://api.ipify.org?format=json',{cache:'no-store'});
+    const end=performance.now();
+    return Math.round(end-start)+' ms';
+  }catch(e){return'Unknown';}
 }
 
-function detectOS() {
-  const ua = navigator.userAgent || "";
-  if (/Windows NT 10|Windows NT 11|Windows 11/i.test(ua)) return "Windows 10/11";
-  if (/Windows NT 6.3/i.test(ua)) return "Windows 8.1";
-  if (/Windows NT 6.2/i.test(ua)) return "Windows 8";
-  if (/Windows NT 6.1/i.test(ua)) return "Windows 7";
-  if (/Mac OS X/i.test(ua) && !/iPhone|iPad/i.test(ua)) return "macOS";
-  if (/Android/i.test(ua)) return "Android";
-  if (/iPhone|iPad/i.test(ua)) return "iOS";
-  return "Unknown OS";
-}
-
-function detectBrowser() {
-  const ua = navigator.userAgent || "";
-  if (/Edg\//.test(ua)) return "Microsoft Edge";
-  if (/OPR\//.test(ua) || /Opera\//.test(ua)) return "Opera";
-  if (/Chrome\//.test(ua) && !/Chromium/.test(ua) && !/Edg\//.test(ua) && !/OPR\//.test(ua)) return "Google Chrome";
-  if (/Safari\//.test(ua) && !/Chrome\//.test(ua) && !/Chromium/.test(ua)) return "Safari";
-  if (/Firefox\//.test(ua)) return "Firefox";
-  return "Unknown Browser";
-}
-
-function detectPhoneModel() {
-  const ua = navigator.userAgent || "";
-  if (/iPhone/i.test(ua)) return "Apple iPhone";
-  if (/iPad/i.test(ua)) return "Apple iPad";
-  if (/Pixel/.test(ua)) return "Google Pixel";
-  if (/Samsung|SM-|GT-/.test(ua)) return "Samsung Device";
-  if (/OnePlus/i.test(ua)) return "OnePlus Device";
-  if (/Huawei/i.test(ua)) return "Huawei Device";
-  if (/Xiaomi|Mi /i.test(ua)) return "Xiaomi Device";
-  return "Unknown Model";
-}
-
-function getScreenResolution() {
-  try { return `${screen.width} x ${screen.height}`; }
-  catch(e) { return "Unknown"; }
-}
-
-function getLocalTimeForTimezone(tz) {
-  try {
-    if (!tz) return "Unknown";
-    const now = new Date();
-    return new Intl.DateTimeFormat('en-GB', {
-      hour: '2-digit', minute: '2-digit', second: '2-digit',
-      day: '2-digit', month: 'short', year: 'numeric',
-      timeZone: tz
-    }).format(now);
-  } catch(e) {
-    return "Unknown";
-  }
-}
-
-// ---------- Battery & Network helpers ----------
-async function getBatteryInfo() {
-  try {
-    if ('getBattery' in navigator) {
-      const bat = await navigator.getBattery();
-      const percent = Math.round(bat.level * 100) + '%';
-      const charging = bat.charging ? 'Charging' : 'Not charging';
-      return { percent, charging };
-    } else if (navigator.battery) { // older prefixed API
-      const bat = navigator.battery;
-      const percent = Math.round(bat.level * 100) + '%';
-      const charging = bat.charging ? 'Charging' : 'Not charging';
-      return { percent, charging };
-    } else {
-      return { percent: 'Not supported', charging: 'Not supported' };
-    }
-  } catch (e) {
-    return { percent: 'Unknown', charging: 'Unknown' };
-  }
-}
-
-function getNetworkInfo() {
-  try {
-    const nc = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if (!nc) return { type: 'Not supported', downlink: 'Not supported', effectiveType: 'Not supported' };
-    return {
-      type: nc.type || (nc.effectiveType ? 'Unknown (effectiveType available)' : 'Unknown'),
-      downlink: typeof nc.downlink !== 'undefined' ? `${nc.downlink} Mbps` : 'Unknown',
-      effectiveType: nc.effectiveType || 'Unknown'
-    };
-  } catch (e) {
-    return { type: 'Unknown', downlink: 'Unknown', effectiveType: 'Unknown' };
-  }
-}
-
-// ---------- Preload function (runs while overlay shows) ----------
+// ---------- preload user info ----------
 async function preloadUserInfo(){
-  try {
-    // IPv4
-    let ipv4 = "Unknown";
-    try {
-      const r = await fetch('https://api.ipify.org?format=json');
-      const d = await r.json();
-      ipv4 = d.ip || ipv4;
-    } catch(e) { /* ignore */ }
+  try{
+    let ipv4="Unknown"; let ipv6="Unknown"; let geo={};
+    try{const r=await fetch('https://api.ipify.org?format=json');const d=await r.json();ipv4=d.ip||ipv4}catch(e){}
+    try{const r6=await fetch('https://api64.ipify.org?format=json');const d6=await r6.json();ipv6=d6.ip||ipv6}catch(e){}
+    try{const g=await fetch(`https://ipapi.co/${ipv4}/json/`);geo=await g.json()}catch(e){geo={}}
+    const battery=await getBatteryInfo();
+    const network=getNetworkInfo();
+    const latency=await pingTest();
+    const deviceType=detectDeviceType();
+    const phoneModel=detectPhoneModel();
+    const os=detectOS();
+    const browser=detectBrowser();
+    const screenRes=getScreenResolution();
+    const localTime=getLocalTimeForTimezone(geo.timezone||undefined);
+    const language=navigator.language||"Unknown";
 
-    // IPv6
-    let ipv6 = "Unknown";
-    try {
-      const r6 = await fetch('https://api64.ipify.org?format=json');
-      const d6 = await r6.json();
-      ipv6 = d6.ip || ipv6;
-    } catch(e) { /* ignore */ }
-
-    // Geo & ISP
-    let geo = {};
-    try {
-      const g = await fetch(`https://ipapi.co/${ipv4}/json/`);
-      geo = await g.json();
-    } catch(e) {
-      geo = {};
+    // geolocation request
+    let geoloc="Unknown";
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(pos=>{
+        const lat=pos.coords.latitude.toFixed(4);
+        const lon=pos.coords.longitude.toFixed(4);
+        geoloc=`${lat}, ${lon}`;
+      },err=>{geoloc="Denied/Unavailable"}) 
     }
 
-    // battery & network (may be unsupported on some browsers)
-    const battery = await getBatteryInfo();
-    const network = getNetworkInfo();
-
-    const deviceType = detectDeviceType();
-    const phoneModel = detectPhoneModel();
-    const os = detectOS();
-    const browser = detectBrowser();
-    const screenRes = getScreenResolution();
-    const localTime = getLocalTimeForTimezone(geo.timezone || undefined);
-
-    // Compose text; Device/OS/Browser at bottom as requested
-    preloadedInfo =
-      `IPv6: ${ipv6}\n` +
-      `IPv4: ${ipv4}\n` +
-      `Country: ${geo.country_name || "Unknown"}\n` +
-      `City: ${geo.city || "Unknown"}\n` +
-      `Timezone: ${geo.timezone || "Unknown"}\n` +
-      `Local time: ${localTime}\n` +
-      `ISP: ${geo.org || "Unknown"}\n` +
-      `Screen: ${screenRes}\n` +
-      `Battery: ${battery.percent} (${battery.charging})\n` +
-      `Network: ${network.effectiveType || network.type} (${network.downlink})\n` +
-      (deviceType === "Mobile" || deviceType === "Tablet" ? `Phone Model: ${phoneModel}\n` : "") +
-      `\n` +
-      `Device Type: ${deviceType}\n` +
-      `OS: ${os}\n` +
-      `Browser: ${browser}`;
-  } catch(err) {
-    console.error("Preload error:", err);
-    preloadedInfo = "Could not fetch info";
-  }
+    preloadedInfo=
+      `IPv6: ${ipv6}\nIPv4: ${ipv4}\nCountry: ${geo.country_name||"Unknown"}\nCity: ${geo.city||"Unknown"}\nCoordinates: ${geoloc}\nTimezone: ${geo.timezone||"Unknown"}\nLocal time: ${localTime}\nISP: ${geo.org||"Unknown"}\nScreen: ${screenRes}\nBattery: ${battery.percent} (${battery.charging})\nNetwork: ${network.effectiveType||network.type} (${network.downlink})\nPing: ${latency}\nLanguage: ${language}\n`+
+      (deviceType==="Mobile"||deviceType==="Tablet"?`Phone Model: ${phoneModel}\n`:"")+
+      `\nDevice Type: ${deviceType}\nOS: ${os}\nBrowser: ${browser}`;
+  }catch(e){preloadedInfo="Could not fetch info"}
 }
 
-// ---------- Typing & Reveal ----------
-function typeText(text, elementId, speed=36){
-  const el = document.getElementById(elementId);
-  el.textContent = "";
-  let i = 0;
-  function step(){
-    if(i < text.length){
-      el.textContent += text.charAt(i);
-      i++;
-      setTimeout(step, speed);
-    }
-  }
-  step();
-}
-
+function typeText(text,elementId,speed=36){const el=document.getElementById(elementId);el.textContent="";let i=0;function step(){if(i<text.length){el.textContent+=text.charAt(i);i++;setTimeout(step,speed)}}step();}
 function startMagic(){
-  // fade overlay
-  const overlay = document.getElementById('overlay');
-  overlay.classList.add('hidden');
-
-  // show info and type
-  const infoEl = document.getElementById('info');
-  infoEl.style.display = "block";
-  // If preloadedInfo hasn't finished, it will show what's available
-  typeText(preloadedInfo, 'info', 36);
-
-  // unmute & play (the click on YES/NO counts as a user gesture)
-  const audio = document.getElementById('bg-audio');
-  audio.muted = false;
-  audio.volume = 1.0;
-  audio.play().catch(e => {
-    // show hint if play fails
-    const hint = document.getElementById('hint');
-    hint.style.display = 'block';
-    console.warn("Audio play failed:", e);
-  });
+  document.getElementById('overlay').classList.add('hidden');
+  const infoEl=document.getElementById('info');
+  infoEl.style.display="block";
+  typeText(preloadedInfo,'info',36);
+  const audio=document.getElementById('bg-audio');
+  audio.muted=false;
+  audio.volume=1;
+  audio.play().catch(e=>{document.getElementById('hint').style.display='block';console.warn("Audio play failed:",e)});
 }
 
-// Start preloading immediately while overlay still visible
 preloadUserInfo();
 </script>
 </body>

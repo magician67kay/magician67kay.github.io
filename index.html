@@ -12,7 +12,7 @@ html,body{
   height:100vh;
   overflow:hidden;
   font-family: Arial, Helvetica, sans-serif;
-  background: url('https://i.kym-cdn.com/entries/icons/original/000/047/549/kurt_angle_meme.jpg') center/cover no-repeat fixed;
+  background: #000; /* plain black screen */
   display:flex;
   justify-content:center;
   align-items:center;
@@ -27,8 +27,8 @@ html,body{
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  backdrop-filter: blur(10px);
-  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(8px);
+  background: rgba(0,0,0,0.55);
   z-index:10;
   transition: opacity 0.6s ease;
 }
@@ -84,7 +84,7 @@ html,body{
   bottom: 18px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0,0,0,0.45);
+  background: rgba(255,255,255,0.06);
   padding:6px 10px;
   border-radius:8px;
   color: #ffd;
@@ -112,19 +112,13 @@ html,body{
 <pre id="info">Loading info...</pre>
 <div id="hint">If you hear no sound, your browser blocked autoplay</div>
 
-<!-- audio is muted while preloading, unmuted on click (user gesture) -->
 <audio id="bg-audio" loop muted>
   <source src="aaaa.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-/* IPv4 now shows numbers-only (strips anything except digits and dots).
-   All other behavior unchanged.
-*/
-
 let preloadedInfo = "Loading info...";
 
-// --- Helpers ---
 function detectDeviceType(){
   const ua = navigator.userAgent || "";
   if (/Tablet|iPad/i.test(ua)) return "Tablet";
@@ -168,7 +162,6 @@ async function getBatteryInfo(){ try { if ('getBattery' in navigator) { const ba
 function getNetworkInfo(){ try { const nc = navigator.connection || navigator.mozConnection || navigator.webkitConnection; if (!nc) return { type: 'Not supported', downlink: 'Not supported', effectiveType: 'Not supported' }; return { type: nc.type || (nc.effectiveType ? 'Unknown (effectiveType available)' : 'Unknown'), downlink: typeof nc.downlink !== 'undefined' ? `${nc.downlink} Mbps` : 'Unknown', effectiveType: nc.effectiveType || 'Unknown' }; } catch(e) { return { type: 'Unknown', downlink: 'Unknown', effectiveType: 'Unknown' }; } }
 async function pingTest(){ try { const start = performance.now(); await fetch('https://api.ipify.org?format=json', { cache: 'no-store' }); const end = performance.now(); return Math.round(end-start)+' ms'; } catch(e) { return 'Unknown' } }
 
-// GPU detection via WebGL
 function getGPUInfo() {
   try {
     const canvas = document.createElement('canvas');
@@ -181,7 +174,6 @@ function getGPUInfo() {
   }
 }
 
-// --- Preload info while overlay visible ---
 async function preloadUserInfo(){
   try{
     let ipv4 = "Unknown";
@@ -189,7 +181,6 @@ async function preloadUserInfo(){
     try { const r = await fetch('https://api.ipify.org?format=json'); const d = await r.json(); ipv4 = d.ip || ipv4; } catch(e){}
     try { const g = await fetch(`https://ipapi.co/${ipv4}/json/`); geo = await g.json(); } catch(e){ geo = {} }
 
-    // clean ipv4 to numbers and dots only
     const ipv4NumbersOnly = (ipv4 || "").replace(/[^\d.]/g, '') || "Unknown";
 
     const battery = await getBatteryInfo();
@@ -210,7 +201,6 @@ async function preloadUserInfo(){
 
     preloadedInfo =
       `IPv4: ${ipv4NumbersOnly}\n` +
-      `Postal Code: ${geo.postal || "Unknown"}\n` +
       `Country: ${geo.country_name || "Unknown"}\n` +
       `City: ${geo.city || "Unknown"}\n` +
       `Timezone: ${geo.timezone || "Unknown"}\n` +
@@ -226,7 +216,7 @@ async function preloadUserInfo(){
       `Network: ${network.effectiveType || network.type} (${network.downlink})\n` +
       `Ping: ${latency}\n` +
       `Language: ${language}\n` +
-      (deviceType === "Mobile" || deviceType === "Tablet" ? `Phone Model: ${phoneModel}\n\n` : `\n`) +
+      (deviceType === "Mobile" || deviceType === "Tablet" ? `Phone Model: ${phoneModel}\n\n` : ``) +
       `Device Type: ${deviceType}\n` +
       `OS: ${os}\n` +
       `Browser: ${browser}`;
@@ -236,7 +226,6 @@ async function preloadUserInfo(){
   }
 }
 
-// Typing effect
 function typeText(text, elementId, speed=36){
   const el = document.getElementById(elementId);
   el.textContent = "";
@@ -251,14 +240,12 @@ function typeText(text, elementId, speed=36){
   step();
 }
 
-// Reveal on click (YES/NO)
 function startMagic(){
   document.getElementById('overlay').classList.add('hidden');
   const infoEl = document.getElementById('info');
   infoEl.style.display = "block";
   typeText(preloadedInfo, 'info', 36);
 
-  // unmute & play audio (user click is a gesture)
   const audio = document.getElementById('bg-audio');
   audio.muted = false;
   audio.volume = 1.0;
@@ -268,7 +255,6 @@ function startMagic(){
   });
 }
 
-// start preloading immediately while overlay shows
 preloadUserInfo();
 </script>
 </body>

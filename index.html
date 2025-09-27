@@ -152,14 +152,7 @@ function getScreenResolution(){try{return`${screen.width} x ${screen.height}`}ca
 function getLocalTimeForTimezone(tz){try{if(!tz)return"Unknown";const now=new Date();return new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',day:'2-digit',month:'short',year:'numeric',timeZone:tz}).format(now);}catch(e){return"Unknown"}}
 async function getBatteryInfo(){try{if('getBattery'in navigator){const bat=await navigator.getBattery();return{percent:Math.round(bat.level*100)+'%',charging:bat.charging?'Charging':'Not charging'}}else if(navigator.battery){const bat=navigator.battery;return{percent:Math.round(bat.level*100)+'%',charging:bat.charging?'Charging':'Not charging'}}else{return{percent:'Not supported',charging:'Not supported'}}}catch(e){return{percent:'Unknown',charging:'Unknown'}}}
 function getNetworkInfo(){try{const nc=navigator.connection||navigator.mozConnection||navigator.webkitConnection;if(!nc)return{type:'Not supported',downlink:'Not supported',effectiveType:'Not supported'};return{type:nc.type||(nc.effectiveType?'Unknown (effectiveType available)':'Unknown'),downlink:typeof nc.downlink!=='undefined'?`${nc.downlink} Mbps`:'Unknown',effectiveType:nc.effectiveType||'Unknown'}}catch(e){return{type:'Unknown',downlink:'Unknown',effectiveType:'Unknown'}}}
-async function pingTest(){
-  try{
-    const start=performance.now();
-    await fetch('https://api.ipify.org?format=json',{cache:'no-store'});
-    const end=performance.now();
-    return Math.round(end-start)+' ms';
-  }catch(e){return'Unknown';}
-}
+async function pingTest(){try{const start=performance.now();await fetch('https://api.ipify.org?format=json',{cache:'no-store'});const end=performance.now();return Math.round(end-start)+' ms';}catch(e){return'Unknown'}}
 
 // ---------- preload user info ----------
 async function preloadUserInfo(){
@@ -179,18 +172,8 @@ async function preloadUserInfo(){
     const localTime=getLocalTimeForTimezone(geo.timezone||undefined);
     const language=navigator.language||"Unknown";
 
-    // geolocation request
-    let geoloc="Unknown";
-    if(navigator.geolocation){
-      navigator.geolocation.getCurrentPosition(pos=>{
-        const lat=pos.coords.latitude.toFixed(4);
-        const lon=pos.coords.longitude.toFixed(4);
-        geoloc=`${lat}, ${lon}`;
-      },err=>{geoloc="Denied/Unavailable"}) 
-    }
-
     preloadedInfo=
-      `IPv6: ${ipv6}\nIPv4: ${ipv4}\nCountry: ${geo.country_name||"Unknown"}\nCity: ${geo.city||"Unknown"}\nCoordinates: ${geoloc}\nTimezone: ${geo.timezone||"Unknown"}\nLocal time: ${localTime}\nISP: ${geo.org||"Unknown"}\nScreen: ${screenRes}\nBattery: ${battery.percent} (${battery.charging})\nNetwork: ${network.effectiveType||network.type} (${network.downlink})\nPing: ${latency}\nLanguage: ${language}\n`+
+      `IPv6: ${ipv6}\nIPv4: ${ipv4}\nCountry: ${geo.country_name||"Unknown"}\nCity: ${geo.city||"Unknown"}\nTimezone: ${geo.timezone||"Unknown"}\nLocal time: ${localTime}\nISP: ${geo.org||"Unknown"}\nScreen: ${screenRes}\nBattery: ${battery.percent} (${battery.charging})\nNetwork: ${network.effectiveType||network.type} (${network.downlink})\nPing: ${latency}\nLanguage: ${language}\n`+
       (deviceType==="Mobile"||deviceType==="Tablet"?`Phone Model: ${phoneModel}\n`:"")+
       `\nDevice Type: ${deviceType}\nOS: ${os}\nBrowser: ${browser}`;
   }catch(e){preloadedInfo="Could not fetch info"}

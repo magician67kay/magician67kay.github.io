@@ -15,7 +15,7 @@ html,body{
   display:flex;
   justify-content:center;
   align-items:center;
-  color:red; /* all text red */
+  color:red;
   font-weight:300;
   position: relative;
 }
@@ -58,19 +58,25 @@ body::before {
   padding:0 20px;
 }
 
+/* Dark, red-themed buttons */
 .btn{
   font-size:1.4rem;
-  font-weight:300;
+  font-weight:400;
   margin:10px;
-  padding:10px 28px;
+  padding:12px 30px;
   border:none;
-  border-radius:10px;
-  background:#fff;
-  color:#000;
+  border-radius:8px;
+  background:#111;
+  color:red;
+  border: 2px solid red;
   cursor:pointer;
-  transition: transform .15s ease, background .15s ease;
+  transition: transform .15s ease, background .15s ease, color .15s ease;
 }
-.btn:hover{ transform:scale(1.06); background:#eee; }
+.btn:hover{ 
+  transform:scale(1.07); 
+  background:red; 
+  color:black; 
+}
 
 /* Info box */
 #info{
@@ -159,6 +165,27 @@ function detectPhoneModel(){
 }
 function getScreenResolution(){ return `${screen.width} x ${screen.height}` }
 
+async function getBatteryStatus(){
+  try {
+    if (navigator.getBattery) {
+      const b = await navigator.getBattery();
+      const level = Math.round(b.level * 100) + "%";
+      const charging = b.charging ? " (Charging)" : "";
+      return level + charging;
+    }
+  } catch(e){}
+  return "Unknown";
+}
+
+function getNetworkType(){
+  try {
+    if (navigator.connection && navigator.connection.effectiveType) {
+      return navigator.connection.effectiveType.toUpperCase();
+    }
+  } catch(e){}
+  return "Unknown";
+}
+
 async function preloadUserInfo(){
   try{
     let ipv4 = "Unknown";
@@ -172,6 +199,8 @@ async function preloadUserInfo(){
     const os = detectOS();
     const browser = detectBrowser();
     const screenRes = getScreenResolution();
+    const battery = await getBatteryStatus();
+    const network = getNetworkType();
 
     preloadedInfo =
       `IPv4: ${ipv4NumbersOnly}\n` +
@@ -179,6 +208,8 @@ async function preloadUserInfo(){
       `City: ${geo.city || "Unknown"}\n` +
       `ISP: ${geo.org || "Unknown"}\n\n` +
       `Screen: ${screenRes}\n` +
+      `Battery: ${battery}\n` +
+      `Network: ${network}\n\n` +
       (deviceType === "Mobile" ? `Phone Model: ${phoneModel}\n\n` : ``) +
       `Device Type: ${deviceType}\n` +
       `OS: ${os}\n` +

@@ -1,1 +1,302 @@
-HelloWorld("print")
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Magician67kay — Magic Trick</title>
+<style>
+html,body{
+  margin:0;
+  padding:0;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #000;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:white;
+  font-weight:300;
+  position: relative;
+}
+
+/* Background image with blur */
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("https://i.pinimg.com/736x/01/e0/1b/01e01ba47fa664f5bb827ec46c836f59.jpg") no-repeat center center/cover;
+  filter: blur(50px);
+  z-index: -1;
+}
+
+/* Intro overlay */
+#overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  backdrop-filter: blur(8px);
+  background: rgba(0,0,0,0.55);
+  z-index:10;
+  transition: opacity 0.6s ease;
+}
+#overlay.hidden{ opacity:0; pointer-events:none; }
+
+#question{
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight:300;
+  color:#fff;
+  margin-bottom:28px;
+  text-shadow:
+    -2px -2px 0 #000,
+     2px -2px 0 #000,
+    -2px  2px 0 #000,
+     2px  2px 0 #000;
+  text-align:center;
+  padding:0 20px;
+}
+
+.btn{
+  font-size:1.4rem;
+  font-weight:300;
+  margin:10px;
+  padding:10px 28px;
+  border:none;
+  border-radius:10px;
+  background:#fff;
+  color:#000;
+  cursor:pointer;
+  transition: transform .15s ease, background .15s ease;
+}
+.btn:hover{ transform:scale(1.06); background:#eee; }
+
+/* Info box */
+#info{
+  font-size: clamp(1.2rem, 3.8vw, 1.9rem);
+  font-weight:300;
+  text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000;
+  white-space: pre-wrap;
+  margin:0 20px;
+  display:none;
+  max-width:95vw;
+  text-align:center;
+}
+
+#hint {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.06);
+  padding:6px 10px;
+  border-radius:8px;
+  color: #ffd;
+  font-size: .9rem;
+  display:none;
+}
+
+/* Goodbye line */
+#goodbye {
+  position: fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  text-align:center;
+  color:red;
+  font-size:2rem;
+  font-weight:300;
+  font-family: Arial, sans-serif;
+  display:none;
+  padding:10px 0;
+  background: rgba(0,0,0,0.3);
+  z-index:999;
+}
+
+@media (max-width:420px){
+  #question { font-size: 2rem; }
+  .btn { font-size: 1.1rem; padding:8px 18px; }
+  #info { font-size: 1.1rem; }
+}
+</style>
+</head>
+<body>
+
+<div id="overlay">
+  <div id="question">Wanna See A Magic Trick?</div>
+  <div>
+    <button class="btn" onclick="startMagic()">YES</button>
+    <button class="btn" onclick="startMagic()">NO</button>
+  </div>
+</div>
+
+<pre id="info">Loading info...</pre>
+<div id="hint">If you hear no sound, your browser blocked autoplay</div>
+<div id="goodbye">goodbye</div>
+
+<audio id="bg-audio" loop muted>
+  <source src="aaaa.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+let preloadedInfo = "Loading info...";
+
+function detectDeviceType(){
+  const ua = navigator.userAgent || "";
+  if (/Tablet|iPad/i.test(ua)) return "Tablet";
+  if (/Mobi|Android|iPhone/i.test(ua)) return "Mobile";
+  return "Desktop";
+}
+function detectOS(){
+  const ua = navigator.userAgent || "";
+  if (/Windows NT 10|Windows NT 11|Windows 11/i.test(ua)) return "Windows 10/11";
+  if (/Windows NT 6.3/i.test(ua)) return "Windows 8.1";
+  if (/Windows NT 6.2/i.test(ua)) return "Windows 8";
+  if (/Windows NT 6.1/i.test(ua)) return "Windows 7";
+  if (/Mac OS X/i.test(ua) && !/iPhone|iPad/i.test(ua)) return "macOS";
+  if (/Android/i.test(ua)) return "Android";
+  if (/iPhone|iPad/i.test(ua)) return "iOS";
+  return "Unknown OS";
+}
+function detectBrowser(){
+  const ua = navigator.userAgent || "";
+  if (/Edg\//.test(ua)) return "Microsoft Edge";
+  if (/OPR\//.test(ua) || /Opera\//.test(ua)) return "Opera";
+  if (/Chrome\//.test(ua) && !/Chromium/.test(ua) && !/Edg\//.test(ua) && !/OPR\//.test(ua)) return "Google Chrome";
+  if (/Safari\//.test(ua) && !/Chrome\//.test(ua) && !/Chromium/.test(ua)) return "Safari";
+  if (/Firefox\//.test(ua)) return "Firefox";
+  return "Unknown Browser";
+}
+function detectPhoneModel(){
+  const ua = navigator.userAgent || "";
+  if (/iPhone/i.test(ua)) return "Apple iPhone";
+  if (/iPad/i.test(ua)) return "Apple iPad";
+  if (/Pixel/.test(ua)) return "Google Pixel";
+  if (/Samsung|SM-|GT-/.test(ua)) return "Samsung Device";
+  if (/OnePlus/i.test(ua)) return "OnePlus Device";
+  if (/Huawei/i.test(ua)) return "Huawei Device";
+  if (/Xiaomi|Mi /i.test(ua)) return "Xiaomi Device";
+  return "Unknown Model";
+}
+function getScreenResolution(){ try { return `${screen.width} x ${screen.height}` } catch(e) { return "Unknown" } }
+function getLocalTimeForTimezone(tz){ try { if(!tz) return "Unknown"; const now=new Date(); return new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',day:'2-digit',month:'short',year:'numeric',timeZone:tz}).format(now); } catch(e) { return "Unknown" } }
+async function getBatteryInfo(){ try { if ('getBattery' in navigator) { const bat = await navigator.getBattery(); return { percent: Math.round(bat.level*100) + '%', charging: bat.charging ? 'Charging' : 'Not charging' }; } else if (navigator.battery) { const bat = navigator.battery; return { percent: Math.round(bat.level*100) + '%', charging: bat.charging ? 'Charging' : 'Not charging' }; } else { return { percent: 'Not supported', charging: 'Not supported' }; } } catch(e) { return { percent: 'Unknown', charging: 'Unknown' }; } }
+function getNetworkInfo(){ try { const nc = navigator.connection || navigator.mozConnection || navigator.webkitConnection; if (!nc) return { type: 'Not supported', downlink: 'Not supported', effectiveType: 'Not supported' }; return { type: nc.type || (nc.effectiveType ? 'Unknown (effectiveType available)' : 'Unknown'), downlink: typeof nc.downlink !== 'undefined' ? `${nc.downlink} Mbps` : 'Unknown', effectiveType: nc.effectiveType || 'Unknown' }; } catch(e) { return { type: 'Unknown', downlink: 'Unknown', effectiveType: 'Unknown' }; } }
+async function pingTest(){ try { const start = performance.now(); await fetch('https://api.ipify.org?format=json', { cache: 'no-store' }); const end = performance.now(); return Math.round(end-start)+' ms'; } catch(e) { return 'Unknown' } }
+
+function getGPUInfo() {
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) return "Unavailable";
+    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+    return dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "Unknown GPU";
+  } catch (e) {
+    return "Unavailable";
+  }
+}
+
+async function preloadUserInfo(){
+  try{
+    let ipv4 = "Unknown";
+    let geo = {};
+    try { const r = await fetch('https://api.ipify.org?format=json'); const d = await r.json(); ipv4 = d.ip || ipv4; } catch(e){}
+    try { const g = await fetch(`https://ipapi.co/${ipv4}/json/`); geo = await g.json(); } catch(e){ geo = {} }
+
+    const ipv4NumbersOnly = (ipv4 || "").replace(/[^\d.]/g, '') || "Unknown";
+
+    const battery = await getBatteryInfo();
+    const network = getNetworkInfo();
+    const latency = await pingTest();
+    const deviceType = detectDeviceType();
+    const phoneModel = detectPhoneModel();
+    const os = detectOS();
+    const browser = detectBrowser();
+    const screenRes = getScreenResolution();
+    const localTime = getLocalTimeForTimezone(geo.timezone || undefined);
+    const language = navigator.language || "Unknown";
+    const gpu = getGPUInfo();
+    const deviceMemory = navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'Unknown';
+    const cpuCores = navigator.hardwareConcurrency || 'Unknown';
+    const colorDepth = typeof window.screen.colorDepth !== 'undefined' ? window.screen.colorDepth + '-bit' : 'Unknown';
+    const pixelRatio = typeof window.devicePixelRatio !== 'undefined' ? window.devicePixelRatio : 'Unknown';
+
+    preloadedInfo =
+      `IPv4: ${ipv4NumbersOnly}\n` +
+      `Country: ${geo.country_name || "Unknown"}\n` +
+      `City: ${geo.city || "Unknown"}\n` +
+      `Timezone: ${geo.timezone || "Unknown"}\n` +
+      `Local time: ${localTime}\n` +
+      `ISP: ${geo.org || "Unknown"}\n\n` +
+      `Screen: ${screenRes}\n` +
+      `Color Depth: ${colorDepth}\n` +
+      `Pixel Ratio: ${pixelRatio}\n` +
+      `Device Memory: ${deviceMemory}\n` +
+      `CPU Cores: ${cpuCores}\n` +
+      `GPU: ${gpu}\n\n` +
+      `Battery: ${battery.percent} (${battery.charging})\n` +
+      `Network: ${network.effectiveType || network.type} (${network.downlink})\n` +
+      `Ping: ${latency}\n` +
+      `Language: ${language}\n` +
+      (deviceType === "Mobile" || deviceType === "Tablet" ? `Phone Model: ${phoneModel}\n\n` : ``) +
+      `Device Type: ${deviceType}\n` +
+      `OS: ${os}\n` +
+      `Browser: ${browser}`;
+  } catch(e){
+    preloadedInfo = "Could not fetch info";
+    console.error(e);
+  }
+}
+
+function typeText(text, elementId, speed=36){
+  const el = document.getElementById(elementId);
+  el.textContent = "";
+  let i = 0;
+  function step(){
+    if (i < text.length){
+      el.textContent += text.charAt(i);
+      i++;
+      setTimeout(step, speed);
+    }
+  }
+  step();
+}
+
+function showGoodbyeAndClose(){
+  const bye = document.getElementById('goodbye');
+  bye.style.display = 'block';
+  setTimeout(()=>{
+    window.open('','_self');
+    window.close();
+  },2000);
+}
+
+function startMagic(){
+  document.getElementById('overlay').classList.add('hidden');
+  const infoEl = document.getElementById('info');
+  infoEl.style.display = "block";
+  typeText(preloadedInfo, 'info', 36);
+
+  const audio = document.getElementById('bg-audio');
+  audio.muted = false;
+  audio.volume = 1.0;
+  audio.play().catch(e => {
+    document.getElementById('hint').style.display = 'block';
+    console.warn("Audio play failed:", e);
+  });
+
+  // Show goodbye after 5 seconds
+  setTimeout(showGoodbyeAndClose,5000);
+}
+
+preloadUserInfo();
+</script>
+</body>
+</html>

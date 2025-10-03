@@ -30,7 +30,7 @@ body::before {
   z-index: -1;
 }
 
-/* Intro overlay */
+/* Overlay */
 #overlay{
   position:absolute;
   inset:0;
@@ -58,7 +58,7 @@ body::before {
   padding:0 20px;
 }
 
-/* Dark, red-themed buttons */
+/* Dark red buttons */
 .btn{
   font-size:1.4rem;
   font-weight:400;
@@ -78,7 +78,7 @@ body::before {
   color:black; 
 }
 
-/* Info box */
+/* Info */
 #info{
   font-size: clamp(1.2rem, 3.8vw, 1.9rem);
   font-weight:300;
@@ -134,6 +134,7 @@ body::before {
 <script>
 let preloadedInfo = "Loading info...";
 
+// Helpers
 function detectDeviceType(){
   const ua = navigator.userAgent || "";
   if (/Tablet|iPad/i.test(ua)) return "Tablet";
@@ -163,29 +164,47 @@ function detectPhoneModel(){
   if (/Samsung|SM-|GT-/.test(ua)) return "Samsung Device";
   return "Unknown Model";
 }
-function getScreenResolution(){ return `${screen.width} x ${screen.height}` }
-
+function getGPUInfo(){
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) return "Unknown";
+    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+    return debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "Unknown";
+  } catch(e){ return "Unknown"; }
+}
 async function getBatteryStatus(){
   try {
     if (navigator.getBattery) {
       const b = await navigator.getBattery();
-      const level = Math.round(b.level * 100) + "%";
-      const charging = b.charging ? " (Charging)" : "";
-      return level + charging;
+      return {
+        percent: Math.round(b.level * 100) + "%",
+        charging: b.charging ? "Charging" : "Not Charging"
+      };
     }
   } catch(e){}
-  return "Unknown";
+  return { percent: "Unknown", charging: "Unknown" };
 }
-
-function getNetworkType(){
+function getNetworkInfo(){
   try {
-    if (navigator.connection && navigator.connection.effectiveType) {
-      return navigator.connection.effectiveType.toUpperCase();
+    if (navigator.connection) {
+      return {
+        effectiveType: navigator.connection.effectiveType || "Unknown",
+        downlink: navigator.connection.downlink || "?"
+      };
     }
   } catch(e){}
-  return "Unknown";
+  return { effectiveType: "Unknown", downlink: "?" };
+}
+async function testLatency(){
+  const start = performance.now();
+  try {
+    await fetch("https://www.cloudflare.com/cdn-cgi/trace", {mode:'no-cors'});
+    return Math.round(performance.now() - start);
+  } catch(e){ return "?" }
 }
 
+// Preload info
 async function preloadUserInfo(){
   try{
     let ipv4 = "Unknown";
@@ -198,19 +217,36 @@ async function preloadUserInfo(){
     const phoneModel = detectPhoneModel();
     const os = detectOS();
     const browser = detectBrowser();
-    const screenRes = getScreenResolution();
+    const screenRes = `${screen.width} x ${screen.height}`;
+    const colorDepth = screen.colorDepth + "-bit";
+    const pixelRatio = window.devicePixelRatio || 1;
+    const deviceMemory = navigator.deviceMemory ? navigator.deviceMemory + " GB" : "Unknown";
+    const cpuCores = navigator.hardwareConcurrency || "Unknown";
+    const gpu = getGPUInfo();
     const battery = await getBatteryStatus();
-    const network = getNetworkType();
+    const network = getNetworkInfo();
+    const latency = await testLatency();
+    const language = navigator.language || "Unknown";
+    const localTime = new Date().toLocaleString();
 
     preloadedInfo =
       `IPv4: ${ipv4NumbersOnly}\n` +
       `Country: ${geo.country_name || "Unknown"}\n` +
       `City: ${geo.city || "Unknown"}\n` +
+      `Timezone: ${geo.timezone || "Unknown"}\n` +
+      `Local time: ${localTime}\n` +
       `ISP: ${geo.org || "Unknown"}\n\n` +
       `Screen: ${screenRes}\n` +
-      `Battery: ${battery}\n` +
-      `Network: ${network}\n\n` +
-      (deviceType === "Mobile" ? `Phone Model: ${phoneModel}\n\n` : ``) +
+      `Color Depth: ${colorDepth}\n` +
+      `Pixel Ratio: ${pixelRatio}\n` +
+      `Device Memory: ${deviceMemory}\n` +
+      `CPU Cores: ${cpuCores}\n` +
+      `GPU: ${gpu}\n\n` +
+      `Battery: ${battery.percent} (${battery.charging})\n` +
+      `Network: ${network.effectiveType} (${network.downlink} Mbps)\n` +
+      `Ping: ${latency} ms\n` +
+      `Language: ${language}\n` +
+      (deviceType === "Mobile" || deviceType === "Tablet" ? `Phone Model: ${phoneModel}\n\n` : ``) +
       `Device Type: ${deviceType}\n` +
       `OS: ${os}\n` +
       `Browser: ${browser}`;
@@ -220,6 +256,7 @@ async function preloadUserInfo(){
   }
 }
 
+// Typing effect
 function typeText(text, elementId, speed=36){
   const el = document.getElementById(elementId);
   el.textContent = "";
@@ -234,8 +271,9 @@ function typeText(text, elementId, speed=36){
   step();
 }
 
+// Start
 function startMagic(){
-  // start audio instantly
+  // audio instantly
   const audio = document.getElementById('bg-audio');
   audio.muted = false;
   audio.volume = 1.0;
@@ -247,7 +285,7 @@ function startMagic(){
   // hide overlay
   document.getElementById('overlay').classList.add('hidden');
 
-  // show info typing
+  // show info
   const infoEl = document.getElementById('info');
   infoEl.style.display = "block";
   typeText(preloadedInfo, 'info', 36);

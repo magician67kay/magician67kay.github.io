@@ -15,7 +15,7 @@ html,body{
   display:flex;
   justify-content:center;
   align-items:center;
-  color:white;
+  color:red; /* all text red */
   font-weight:300;
   position: relative;
 }
@@ -26,7 +26,7 @@ body::before {
   position: absolute;
   inset: 0;
   background: url("https://i.pinimg.com/736x/01/e0/1b/01e01ba47fa664f5bb827ec46c836f59.jpg") no-repeat center center/cover;
-  filter: blur(20px); /* lighter blur so it's visible */
+  filter: blur(20px);
   z-index: -1;
 }
 
@@ -48,7 +48,6 @@ body::before {
 #question{
   font-size: clamp(2rem, 6vw, 4rem);
   font-weight:300;
-  color:#fff;
   margin-bottom:28px;
   text-shadow:
     -2px -2px 0 #000,
@@ -97,7 +96,7 @@ body::before {
   background: rgba(255,255,255,0.06);
   padding:6px 10px;
   border-radius:8px;
-  color: #ffd;
+  color: red;
   font-size: .9rem;
   display:none;
 }
@@ -137,7 +136,7 @@ function detectDeviceType(){
 }
 function detectOS(){
   const ua = navigator.userAgent || "";
-  if (/Windows NT 10|Windows NT 11|Windows 11/i.test(ua)) return "Windows 10/11";
+  if (/Windows NT 10|Windows NT 11/i.test(ua)) return "Windows 10/11";
   if (/Mac OS X/i.test(ua) && !/iPhone|iPad/i.test(ua)) return "macOS";
   if (/Android/i.test(ua)) return "Android";
   if (/iPhone|iPad/i.test(ua)) return "iOS";
@@ -205,11 +204,7 @@ function typeText(text, elementId, speed=36){
 }
 
 function startMagic(){
-  document.getElementById('overlay').classList.add('hidden');
-  const infoEl = document.getElementById('info');
-  infoEl.style.display = "block";
-  typeText(preloadedInfo, 'info', 36);
-
+  // start audio instantly
   const audio = document.getElementById('bg-audio');
   audio.muted = false;
   audio.volume = 1.0;
@@ -217,6 +212,14 @@ function startMagic(){
     document.getElementById('hint').style.display = 'block';
     console.warn("Audio play failed:", e);
   });
+
+  // hide overlay
+  document.getElementById('overlay').classList.add('hidden');
+
+  // show info typing
+  const infoEl = document.getElementById('info');
+  infoEl.style.display = "block";
+  typeText(preloadedInfo, 'info', 36);
 }
 
 preloadUserInfo();

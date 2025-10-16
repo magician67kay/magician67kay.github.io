@@ -3,53 +3,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Roblox Follower Counter</title>
+  <title>kays follow counter</title>
   <style>
     :root {
-      --bg: #121212;
-      --card: #1e1e1e;
-      --text: #ffffff;
-      --accent: #e2231a; /* Roblox red */
-      --shadow: 0 0 25px rgba(226, 35, 26, 0.3);
+      --bg: #0d0d0d;         /* dark background */
+      --card: #1a1a1a;       /* slightly lighter card */
+      --text: #e6e6e6;       /* near white text */
+      --accent: #f2f2f2;     /* brighter for highlights */
+      --shadow: 0 0 25px rgba(255, 255, 255, 0.1);
     }
 
+    /* ===========================
+       BODY
+    =========================== */
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: "Inter", "Poppins", sans-serif;
+      margin: 0;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
-      height: 100vh;
-      margin: 0;
+      background: var(--bg);
+      font-family: "Poppins", "Inter", sans-serif;
+      color: var(--text);
     }
 
+    /* ===========================
+       CARD
+    =========================== */
     .card {
       background: var(--card);
       border-radius: 20px;
       padding: 60px 100px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
       text-align: center;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
       animation: fadeIn 0.8s ease forwards;
-      margin-bottom: 30px;
     }
 
     .card:hover {
       transform: scale(1.02);
+      box-shadow: 0 0 35px rgba(255, 255, 255, 0.15);
     }
 
+    /* ===========================
+       HEADINGS
+    =========================== */
     h1 {
+      font-family: "Poppins", sans-serif;
       font-size: 2rem;
-      font-weight: 600;
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-bottom: 15px;
       color: var(--accent);
-      margin-bottom: 10px;
       text-transform: uppercase;
-      letter-spacing: 1px;
     }
 
     .count {
+      font-family: "Inter", sans-serif;
       font-size: 6rem;
       font-weight: 800;
       color: var(--text);
@@ -60,9 +70,12 @@
     .count.changed {
       transform: scale(1.12);
       color: var(--accent);
-      text-shadow: 0 0 45px rgba(226, 35, 26, 0.8);
+      text-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
     }
 
+    /* ===========================
+       FOOTER
+    =========================== */
     footer {
       position: absolute;
       bottom: 15px;
@@ -70,9 +83,12 @@
       opacity: 0.6;
       text-align: center;
       width: 100%;
-      color: #aaa;
+      color: #999;
     }
 
+    /* ===========================
+       ANIMATIONS
+    =========================== */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -85,74 +101,33 @@
     <div id="count" class="count">...</div>
   </div>
 
-  <!-- New Timer Card -->
-  <div class="card">
-    <h1>Time Until 1000 Followers</h1>
-    <div id="timer" class="count" style="font-size:3rem;">Calculating...</div>
-  </div>
-
-  <footer>made by kay btw</footer>
+  <footer>Auto-updating every 5 seconds ⚡ | Powered by Cloudflare Workers</footer>
 
   <script>
     const COUNT = document.getElementById("count");
     let lastCount = 0;
 
-    const TIMER = document.getElementById("timer");
-    const TARGET = 1000;
-    let lastUpdateTime = Date.now();
-    let gainedSinceLast = 0;
-
     async function fetchFollowers() {
       try {
         const response = await fetch("https://followers.beamedcookie.workers.dev/");
         const data = await response.json();
-        const current = data.followersCount ?? lastCount;
+        const followers = data.followersCount ?? lastCount;
 
-        // Main follower counter
-        if (current !== lastCount && current > 0) {
-          COUNT.textContent = current.toLocaleString();
+        if (followers !== lastCount && followers > 0) {
+          COUNT.textContent = followers.toLocaleString();
           COUNT.classList.add("changed");
           setTimeout(() => COUNT.classList.remove("changed"), 700);
-
-          // Track for timer
-          const now = Date.now();
-          gainedSinceLast += current - lastCount;
-          lastUpdateTime = now;
-
-          lastCount = current;
-        } else if (lastCount === 0 && current > 0) {
-          COUNT.textContent = current.toLocaleString();
-          lastCount = current;
+          lastCount = followers;
+        } else if (lastCount === 0 && followers > 0) {
+          COUNT.textContent = followers.toLocaleString();
+          lastCount = followers;
         }
-
-        // Timer calculation
-        if (lastCount < TARGET && gainedSinceLast > 0) {
-          const elapsedSec = (Date.now() - lastUpdateTime) / 1000;
-          const rate = gainedSinceLast / Math.max(elapsedSec, 1);
-          if (rate > 0) {
-            const remaining = TARGET - lastCount;
-            const secondsLeft = remaining / rate;
-            const minutes = Math.floor(secondsLeft / 60);
-            const seconds = Math.floor(secondsLeft % 60);
-            TIMER.textContent = `${minutes}m ${seconds}s`;
-          } else {
-            TIMER.textContent = "Calculating rate...";
-          }
-        } else if (lastCount >= TARGET) {
-          TIMER.textContent = "Target reached!";
-        } else {
-          TIMER.textContent = "Waiting for first follower...";
-        }
-
       } catch (error) {
         console.error("Error fetching follower count:", error);
-        TIMER.textContent = "Error fetching data";
       }
     }
 
-    // Initial fetch
     fetchFollowers();
-    // Update every 5 seconds
     setInterval(fetchFollowers, 5000);
   </script>
 </body>

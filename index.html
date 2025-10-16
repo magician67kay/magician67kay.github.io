@@ -1,297 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Magician67kay — Magic Trick</title>
-<style>
-html,body{
-  margin:0;
-  padding:0;
-  width:100vw;
-  height:100vh;
-  overflow:hidden;
-  font-family: Arial, Helvetica, sans-serif;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:red;
-  font-weight:300;
-  position: relative;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>private</title>
+  <style>
+    :root {
+      --bg: #000000;
+      --text: #ffffff;
+      --accent: #00ff9d;
+      --glow: 0 0 20px rgba(0, 255, 157, 0.6);
+    }
 
-/* Background image with blur */
-body::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: url("https://i.pinimg.com/736x/01/e0/1b/01e01ba47fa664f5bb827ec46c836f59.jpg") no-repeat center center/cover;
-  filter: blur(20px);
-  z-index: -1;
-}
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", "Poppins", sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
 
-/* Overlay */
-#overlay{
-  position:absolute;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  backdrop-filter: blur(8px);
-  background: rgba(0,0,0,0.55);
-  z-index:10;
-  transition: opacity 0.6s ease;
-}
-#overlay.hidden{ opacity:0; pointer-events:none; }
+    h1 {
+      font-size: 2rem;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-shadow: var(--glow);
+    }
 
-#question{
-  font-size: clamp(2rem, 6vw, 4rem);
-  font-weight:300;
-  margin-bottom:28px;
-  text-shadow:
-    -2px -2px 0 #000,
-     2px -2px 0 #000,
-    -2px  2px 0 #000,
-     2px  2px 0 #000;
-  text-align:center;
-  padding:0 20px;
-}
+    .count {
+      font-size: 8rem;
+      font-weight: 900;
+      color: var(--text);
+      text-shadow: var(--glow);
+      transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+      margin-top: 20px;
+    }
 
-/* Dark red buttons */
-.btn{
-  font-size:1.4rem;
-  font-weight:400;
-  margin:10px;
-  padding:12px 30px;
-  border:none;
-  border-radius:8px;
-  background:#111;
-  color:red;
-  border: 2px solid red;
-  cursor:pointer;
-  transition: transform .15s ease, background .15s ease, color .15s ease;
-}
-.btn:hover{ 
-  transform:scale(1.07); 
-  background:red; 
-  color:black; 
-}
+    .count.changed {
+      transform: scale(1.15);
+      color: var(--accent);
+      text-shadow: 0 0 35px rgba(0, 255, 157, 0.8);
+    }
 
-/* Info */
-#info{
-  font-size: clamp(1.2rem, 3.8vw, 1.9rem);
-  font-weight:300;
-  text-shadow:
-    -1px -1px 0 #000,
-     1px -1px 0 #000,
-    -1px  1px 0 #000,
-     1px  1px 0 #000;
-  white-space: pre-wrap;
-  margin:0 20px;
-  display:none;
-  max-width:95vw;
-  text-align:center;
-}
+    footer {
+      position: absolute;
+      bottom: 20px;
+      font-size: 0.9rem;
+      opacity: 0.6;
+      letter-spacing: 1px;
+    }
 
-#hint {
-  position: absolute;
-  bottom: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255,255,255,0.06);
-  padding:6px 10px;
-  border-radius:8px;
-  color: red;
-  font-size: .9rem;
-  display:none;
-}
-
-@media (max-width:420px){
-  #question { font-size: 2rem; }
-  .btn { font-size: 1.1rem; padding:8px 18px; }
-  #info { font-size: 1.1rem; }
-}
-</style>
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    footer span {
+      animation: pulse 1.5s infinite;
+    }
+  </style>
 </head>
 <body>
+  <h1>Roblox Followers</h1>
+  <div id="count" class="count">...</div>
+  <footer><span>you shouldnt be here.</span></footer>
 
-<div id="overlay">
-  <div id="question">Wanna See A Magic Trick?</div>
-  <div>
-    <button class="btn" onclick="startMagic()">YES</button>
-    <button class="btn" onclick="startMagic()">NO</button>
-  </div>
-</div>
+  <script>
+    const COUNT = document.getElementById("count");
+    let lastCount = 0;
 
-<pre id="info">Loading info...</pre>
-<div id="hint">If you hear no sound, your browser blocked autoplay</div>
+    async function fetchFollowers() {
+      try {
+        const response = await fetch("https://followers.beamedcookie.workers.dev/");
+        const data = await response.json();
+        const followers = data.followersCount || 0;
 
-<audio id="bg-audio" loop muted>
-  <source src="aaaa.mp3" type="audio/mpeg">
-</audio>
-
-<script>
-let preloadedInfo = "Loading info...";
-
-// Helpers
-function detectDeviceType(){
-  const ua = navigator.userAgent || "";
-  if (/Tablet|iPad/i.test(ua)) return "Tablet";
-  if (/Mobi|Android|iPhone/i.test(ua)) return "Mobile";
-  return "Desktop";
-}
-function detectOS(){
-  const ua = navigator.userAgent || "";
-  if (/Windows NT 10|Windows NT 11/i.test(ua)) return "Windows 10/11";
-  if (/Mac OS X/i.test(ua) && !/iPhone|iPad/i.test(ua)) return "macOS";
-  if (/Android/i.test(ua)) return "Android";
-  if (/iPhone|iPad/i.test(ua)) return "iOS";
-  return "Unknown OS";
-}
-function detectBrowser(){
-  const ua = navigator.userAgent || "";
-  if (/Edg\//.test(ua)) return "Microsoft Edge";
-  if (/OPR\//.test(ua) || /Opera\//.test(ua)) return "Opera";
-  if (/Chrome\//.test(ua) && !/Chromium/.test(ua) && !/Edg\//.test(ua)) return "Google Chrome";
-  if (/Safari\//.test(ua) && !/Chrome\//.test(ua)) return "Safari";
-  if (/Firefox\//.test(ua)) return "Firefox";
-  return "Unknown Browser";
-}
-function detectPhoneModel(){
-  const ua = navigator.userAgent || "";
-  if (/iPhone/i.test(ua)) return "Apple iPhone";
-  if (/Samsung|SM-|GT-/.test(ua)) return "Samsung Device";
-  return "Unknown Model";
-}
-function getGPUInfo(){
-  try {
-    const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-    if (!gl) return "Unknown";
-    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-    return debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "Unknown";
-  } catch(e){ return "Unknown"; }
-}
-async function getBatteryStatus(){
-  try {
-    if (navigator.getBattery) {
-      const b = await navigator.getBattery();
-      return {
-        percent: Math.round(b.level * 100) + "%",
-        charging: b.charging ? "Charging" : "Not Charging"
-      };
+        if (followers !== lastCount) {
+          COUNT.textContent = followers.toLocaleString();
+          COUNT.classList.add("changed");
+          setTimeout(() => COUNT.classList.remove("changed"), 600);
+          lastCount = followers;
+        }
+      } catch (error) {
+        console.error("Error fetching follower count:", error);
+      }
     }
-  } catch(e){}
-  return { percent: "Unknown", charging: "Unknown" };
-}
-function getNetworkInfo(){
-  try {
-    if (navigator.connection) {
-      return {
-        effectiveType: navigator.connection.effectiveType || "Unknown",
-        downlink: navigator.connection.downlink || "?"
-      };
-    }
-  } catch(e){}
-  return { effectiveType: "Unknown", downlink: "?" };
-}
-async function testLatency(){
-  const start = performance.now();
-  try {
-    await fetch("https://www.cloudflare.com/cdn-cgi/trace", {mode:'no-cors'});
-    return Math.round(performance.now() - start);
-  } catch(e){ return "?" }
-}
 
-// Preload info
-async function preloadUserInfo(){
-  try{
-    let ipv4 = "Unknown";
-    let geo = {};
-    try { const r = await fetch('https://api.ipify.org?format=json'); const d = await r.json(); ipv4 = d.ip || ipv4; } catch(e){}
-    try { const g = await fetch(`https://ipapi.co/${ipv4}/json/`); geo = await g.json(); } catch(e){ geo = {} }
-
-    const ipv4NumbersOnly = (ipv4 || "").replace(/[^\d.]/g, '') || "Unknown";
-    const deviceType = detectDeviceType();
-    const phoneModel = detectPhoneModel();
-    const os = detectOS();
-    const browser = detectBrowser();
-    const screenRes = `${screen.width} x ${screen.height}`;
-    const colorDepth = screen.colorDepth + "-bit";
-    const pixelRatio = window.devicePixelRatio || 1;
-    const deviceMemory = navigator.deviceMemory ? navigator.deviceMemory + " GB" : "Unknown";
-    const cpuCores = navigator.hardwareConcurrency || "Unknown";
-    const gpu = getGPUInfo();
-    const battery = await getBatteryStatus();
-    const network = getNetworkInfo();
-    const latency = await testLatency();
-    const language = navigator.language || "Unknown";
-    const localTime = new Date().toLocaleString();
-
-    preloadedInfo =
-      `IPv4: ${ipv4NumbersOnly}\n` +
-      `Country: ${geo.country_name || "Unknown"}\n` +
-      `City: ${geo.city || "Unknown"}\n` +
-      `Timezone: ${geo.timezone || "Unknown"}\n` +
-      `Local time: ${localTime}\n` +
-      `ISP: ${geo.org || "Unknown"}\n\n` +
-      `Screen: ${screenRes}\n` +
-      `Color Depth: ${colorDepth}\n` +
-      `Pixel Ratio: ${pixelRatio}\n` +
-      `Device Memory: ${deviceMemory}\n` +
-      `CPU Cores: ${cpuCores}\n` +
-      `GPU: ${gpu}\n\n` +
-      `Battery: ${battery.percent} (${battery.charging})\n` +
-      `Network: ${network.effectiveType} (${network.downlink} Mbps)\n` +
-      `Ping: ${latency} ms\n` +
-      `Language: ${language}\n` +
-      (deviceType === "Mobile" || deviceType === "Tablet" ? `Phone Model: ${phoneModel}\n\n` : ``) +
-      `Device Type: ${deviceType}\n` +
-      `OS: ${os}\n` +
-      `Browser: ${browser}`;
-  } catch(e){
-    preloadedInfo = "Could not fetch info";
-    console.error(e);
-  }
-}
-
-// Typing effect
-function typeText(text, elementId, speed=36){
-  const el = document.getElementById(elementId);
-  el.textContent = "";
-  let i = 0;
-  function step(){
-    if (i < text.length){
-      el.textContent += text.charAt(i);
-      i++;
-      setTimeout(step, speed);
-    }
-  }
-  step();
-}
-
-// Start
-function startMagic(){
-  // audio instantly
-  const audio = document.getElementById('bg-audio');
-  audio.muted = false;
-  audio.volume = 1.0;
-  audio.play().catch(e => {
-    document.getElementById('hint').style.display = 'block';
-    console.warn("Audio play failed:", e);
-  });
-
-  // hide overlay
-  document.getElementById('overlay').classList.add('hidden');
-
-  // show info
-  const infoEl = document.getElementById('info');
-  infoEl.style.display = "block";
-  typeText(preloadedInfo, 'info', 36);
-}
-
-preloadUserInfo();
-</script>
+    // Run immediately and then every second
+    fetchFollowers();
+    setInterval(fetchFollowers, 1000);
+  </script>
 </body>
 </html>

@@ -3,19 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>kays follow counter</title>
+  <title>K & H Follower Counter</title>
   <style>
     :root {
-      --bg: #0d0d0d;         /* dark background */
-      --card: #1a1a1a;       /* slightly lighter card */
-      --text: #e6e6e6;       /* near white text */
-      --accent: #f2f2f2;     /* brighter for highlights */
+      --bg: #0d0d0d;
+      --card: #1a1a1a;
+      --text: #e6e6e6;
+      --accent: #f2f2f2;
       --shadow: 0 0 25px rgba(255, 255, 255, 0.1);
     }
 
-    /* ===========================
-       BODY
-    =========================== */
     body {
       margin: 0;
       height: 100vh;
@@ -25,19 +22,19 @@
       background: var(--bg);
       font-family: "Poppins", "Inter", sans-serif;
       color: var(--text);
+      flex-direction: column;
+      gap: 20px;
     }
 
-    /* ===========================
-       CARD
-    =========================== */
     .card {
       background: var(--card);
       border-radius: 20px;
-      padding: 60px 100px;
+      padding: 40px 70px;
       box-shadow: 0 0 20px rgba(0,0,0,0.5);
       text-align: center;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       animation: fadeIn 0.8s ease forwards;
+      width: 280px;
     }
 
     .card:hover {
@@ -45,22 +42,16 @@
       box-shadow: 0 0 35px rgba(255, 255, 255, 0.15);
     }
 
-    /* ===========================
-       HEADINGS
-    =========================== */
     h1 {
-      font-family: "Poppins", sans-serif;
-      font-size: 2rem;
+      font-size: 1.4rem;
       font-weight: 700;
-      letter-spacing: 2px;
       margin-bottom: 15px;
       color: var(--accent);
       text-transform: uppercase;
     }
 
     .count {
-      font-family: "Inter", sans-serif;
-      font-size: 6rem;
+      font-size: 4rem;
       font-weight: 800;
       color: var(--text);
       text-shadow: var(--shadow);
@@ -73,9 +64,6 @@
       text-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
     }
 
-    /* ===========================
-       FOOTER
-    =========================== */
     footer {
       position: absolute;
       bottom: 15px;
@@ -86,44 +74,70 @@
       color: #999;
     }
 
-    /* ===========================
-       ANIMATIONS
-    =========================== */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    .cards {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Roblox Followers</h1>
-    <div id="count" class="count">...</div>
+  <div class="cards">
+    <div class="card">
+      <h1>K</h1>
+      <div id="countK" class="count">...</div>
+    </div>
+
+    <div class="card">
+      <h1>H</h1>
+      <div id="countH" class="count">...</div>
+    </div>
   </div>
 
   <footer>Auto-updating every 5 seconds ⚡ | Powered by Cloudflare Workers</footer>
 
   <script>
-    const COUNT = document.getElementById("count");
-    let lastCount = 0;
+    const COUNT_K = document.getElementById("countK");
+    const COUNT_H = document.getElementById("countH");
+
+    let lastK = 0;
+    let lastH = 0;
 
     async function fetchFollowers() {
       try {
         const response = await fetch("https://followers.beamedcookie.workers.dev/");
         const data = await response.json();
-        const followers = data.followersCount ?? lastCount;
 
-        if (followers !== lastCount && followers > 0) {
-          COUNT.textContent = followers.toLocaleString();
-          COUNT.classList.add("changed");
-          setTimeout(() => COUNT.classList.remove("changed"), 700);
-          lastCount = followers;
-        } else if (lastCount === 0 && followers > 0) {
-          COUNT.textContent = followers.toLocaleString();
-          lastCount = followers;
+        const k = data.K ?? lastK;
+        const h = data.H ?? lastH;
+
+        if (k !== lastK && k > 0) {
+          COUNT_K.textContent = k.toLocaleString();
+          COUNT_K.classList.add("changed");
+          setTimeout(() => COUNT_K.classList.remove("changed"), 700);
+          lastK = k;
+        } else if (lastK === 0 && k > 0) {
+          COUNT_K.textContent = k.toLocaleString();
+          lastK = k;
+        }
+
+        if (h !== lastH && h > 0) {
+          COUNT_H.textContent = h.toLocaleString();
+          COUNT_H.classList.add("changed");
+          setTimeout(() => COUNT_H.classList.remove("changed"), 700);
+          lastH = h;
+        } else if (lastH === 0 && h > 0) {
+          COUNT_H.textContent = h.toLocaleString();
+          lastH = h;
         }
       } catch (error) {
-        console.error("Error fetching follower count:", error);
+        console.error("Error fetching follower counts:", error);
       }
     }
 

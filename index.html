@@ -1,24 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Open 1000 Websites</title>
+  <title>Recursive Opener</title>
 </head>
 <body>
-  <h1>Click to try opening 1000 websites (not recommended!)</h1>
-  <button onclick="openWebsites()">Open Websites</button>
+  <h1>Recursive self-opening page</h1>
+  <p>Every 5 seconds this page will try to open another copy of itself.</p>
 
   <script>
-    function openWebsites() {
-      const sites = [];
-      
-      // Generate 1000 dummy URLs for demonstration
-      for (let i = 1; i <= 1000; i++) {
-        sites.push('https://example.com/?site=' + i);
-      }
-
-      // Attempt to open them all
-      sites.forEach(url => window.open(url, '_blank'));
+    function openSelf() {
+      window.open(window.location.href, "_blank");
     }
+
+    // opens a new copy every 5 seconds
+    setInterval(openSelf, 5000);
   </script>
 </body>
 </html>

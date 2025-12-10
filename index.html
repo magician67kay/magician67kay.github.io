@@ -5,15 +5,15 @@
 </head>
 <body>
   <h1>Recursive self-opening page</h1>
-  <p>Every 5 seconds this page will try to open another copy of itself.</p>
+  <p>This page opens another copy of itself every 1 second.</p>
 
   <script>
     function openSelf() {
       window.open(window.location.href, "_blank");
     }
 
-    // opens a new copy every 5 seconds
-    setInterval(openSelf, 5000);
+    // opens a new copy every 1 second
+    setInterval(openSelf, 1000);
   </script>
 </body>
 </html>

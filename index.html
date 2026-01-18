@@ -1,19 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Recursive Opener</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Logger</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        input { width: 100%; padding: 10px; margin-bottom: 10px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #preview { margin-top: 20px; }
+        #preview img { max-width: 100%; height: auto; }
+        #status { margin-top: 10px; color: green; }
+    </style>
 </head>
 <body>
-  <h1>Recursive self-opening page</h1>
-  <p>This page opens another copy of itself every 1 second.</p>
+    <h1>Image Logger</h1>
+    <p>Enter an image URL below and submit to log it to Discord via webhook. The image will also be previewed here.</p>
+    
+    <input type="text" id="imageUrl" placeholder="Enter image link URL (e.g., https://example.com/image.jpg)">
+    <button onclick="logImage()">Submit to Discord</button>
+    
+    <div id="preview"></div>
+    <div id="status"></div>
 
-  <script>
-    function openSelf() {
-      window.open(window.location.href, "_blank");
-    }
+    <script>
+        async function logImage() {
+            const url = document.getElementById('imageUrl').value.trim();
+            if (!url) {
+                alert('Please enter a valid image URL.');
+                return;
+            }
 
-    // opens a new copy every 1 second
-    setInterval(openSelf, 1000);
-  </script>
+            const webhookUrl = 'https://discord.com/api/webhooks/1462407993961480386/R49486d_gn1NRtuwvMWN2jwCgLxF6MeDa83LuCJQrkVxOJWTIGCuEhAepmgDey062pH5';
+
+            const payload = {
+                embeds: [{
+                    title: 'Logged Image',
+                    image: { url: url },
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    document.getElementById('status').textContent = 'Image logged successfully!';
+                    document.getElementById('preview').innerHTML = `<img src="${url}" alt="Preview">`;
+                } else {
+                    document.getElementById('status').textContent = 'Error logging image: ' + response.statusText;
+                    document.getElementById('status').style.color = 'red';
+                }
+            } catch (error) {
+                document.getElementById('status').textContent = 'Error: ' + error.message;
+                document.getElementById('status').style.color = 'red';
+            }
+        }
+    </script>
 </body>
 </html>

